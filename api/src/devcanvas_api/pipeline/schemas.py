@@ -28,6 +28,13 @@ class ScreenType(StrEnum):
     INTERNAL_TOOL = "internal_tool"
 
 
+def _normalize_tone(v: object) -> object:
+    """tone 대소문자 무관 정규화("B2B"/"b2b"/"Startup" → 소문자 값). 공통 validator."""
+    if isinstance(v, str) and not isinstance(v, Tone):
+        return v.lower()
+    return v
+
+
 class GenerationInput(BaseModel):
     """사용자 생성 요청 입력."""
 
@@ -41,11 +48,8 @@ class GenerationInput(BaseModel):
 
     @field_validator("tone", mode="before")
     @classmethod
-    def _normalize_tone(cls, v: object) -> object:
-        # 대소문자 무관 정규화("B2B"/"b2b"/"Startup" → 소문자 값)
-        if isinstance(v, str) and not isinstance(v, Tone):
-            return v.lower()
-        return v
+    def _normalize_input_tone(cls, v: object) -> object:
+        return _normalize_tone(v)
 
 
 # ---------- 1단계: 요구사항 ----------

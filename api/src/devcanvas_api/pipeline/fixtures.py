@@ -142,5 +142,5 @@ def handoff() -> HandoffDoc:
         ],
         install_commands=["pnpm add @radix-ui/react-tabs"],
         todos=["mock 데이터를 실제 API로 교체", "권한별 분기 추가"],
-        guide_md="# 고객 관리 페이지 구현 가이드\n(생성 뼌대)",
+        guide_md="# 고객 관리 페이지 구현 가이드\n(생성 뼈대)",
     )
