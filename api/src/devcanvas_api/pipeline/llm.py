@@ -11,7 +11,7 @@ from typing import Protocol, TypeVar
 
 from pydantic import BaseModel
 
-from devcanvas_api.core.config import settings
+from devcanvas_api.core import settings
 from devcanvas_api.pipeline import fixtures
 from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
@@ -38,6 +38,7 @@ class DummyLLMAdapter:
     """GLM 키 없이 파이프라인을 end-to-end 돌리기 위한 더미 어댑터.
 
     스키마 타입별로 미리 준비된 fixture를 반환한다.
+    반환 시 fixture의 깊은 복사본을 주어 호출부 수정이 전역 fixture를 오염시키지 않게 한다.
     """
 
     _FIXTURES: dict[type[BaseModel], object] = {
@@ -54,7 +55,8 @@ class DummyLLMAdapter:
         fixture = self._FIXTURES.get(schema)
         if fixture is None:
             raise NotImplementedError(f"DummyLLMAdapter: {schema.__name__} fixture 없음")
-        return fixture  # type: ignore[return-value]
+        assert isinstance(fixture, BaseModel)
+        return fixture.model_copy(deep=True)  # type: ignore[return-value]
 
 
 class GLMAdapter:

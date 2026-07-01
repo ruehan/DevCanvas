@@ -44,3 +44,10 @@ def test_pipeline_input_echoed_in_result(sample_input: GenerationInput) -> None:
     result = run_pipeline(sample_input, DummyLLMAdapter())
     assert result.input.prompt == sample_input.prompt
     assert result.input.screen_type == ScreenType.ADMIN
+
+
+def test_pipeline_with_empty_prompt_still_runs() -> None:
+    # 빈 프롬프트도 더미 파이프라인은 구조적으로 동작해야 한다
+    result = run_pipeline(GenerationInput(prompt=""), DummyLLMAdapter())
+    assert result.requirement.features  # 더미 fixture는 채워짐
+    assert result.input.prompt == ""
