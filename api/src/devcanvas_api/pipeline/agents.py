@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+from devcanvas_api.pipeline.design.presets import build_design_system
 from devcanvas_api.pipeline.llm import LLMAdapter
 from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
@@ -37,12 +38,13 @@ def ux_planner_agent(requirement: RequirementSpec, llm: LLMAdapter) -> UXPlan:
 def design_system_agent(
     generation_input: GenerationInput, requirement: RequirementSpec, llm: LLMAdapter
 ) -> DesignSystem:
-    instruction = "서비스 톤에 맞춘 디자인 토큰을 생성하라."
-    return llm.generate(
-        DesignSystem,
-        instruction,
-        {"tone": generation_input.tone, "requirement": requirement.model_dump()},
-    )
+    """톤 기반 규칙으로 디자인 토큰을 생성한다 (ADR-0008, LLM 미사용).
+
+    llm 인자는 파이프라인 시그니처 일관성을 위해 유지하되 사용하지 않는다.
+    향후 브랜드 키워드 정제를 LLM 에 맡기면 이 지점에서 호출한다.
+    """
+    del requirement, llm  # 규칙 기반 — 현재 미사용
+    return build_design_system(generation_input.tone)
 
 
 def ui_generator_agent(

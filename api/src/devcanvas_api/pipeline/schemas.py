@@ -76,6 +76,7 @@ class DesignTokens(BaseModel):
     spacing: dict[str, str] = Field(default_factory=dict)
     radius: dict[str, str] = Field(default_factory=dict)
     typography: dict[str, str] = Field(default_factory=dict)
+    shadows: dict[str, str] = Field(default_factory=dict)
 
 
 class DesignSystem(BaseModel):

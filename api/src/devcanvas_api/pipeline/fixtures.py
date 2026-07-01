@@ -72,6 +72,7 @@ def design_system() -> DesignSystem:
             spacing={"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px"},
             radius={"sm": "6px", "md": "10px", "lg": "16px"},
             typography={"body": "14px", "heading": "20px"},
+            shadows={"sm": "0 1px 2px rgba(0,0,0,0.06)", "md": "0 4px 12px rgba(0,0,0,0.08)"},
         )
     )
 
