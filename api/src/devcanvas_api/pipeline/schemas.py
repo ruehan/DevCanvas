@@ -65,9 +65,18 @@ class RequirementSpec(BaseModel):
 # ---------- 2단계: UX 설계 ----------
 
 
+class ScreenKind(StrEnum):
+    """화면 종류 — 종류별 컴포넌트·상태 템플릿 적용 (ADR-0010)."""
+
+    LIST = "list"
+    DETAIL = "detail"
+    DASHBOARD = "dashboard"
+
+
 class ScreenSpec(BaseModel):
     name: str
     purpose: str
+    kind: ScreenKind = ScreenKind.LIST
     components: list[str] = Field(default_factory=list)
     data_columns: list[str] = Field(default_factory=list)
     filters: list[str] = Field(default_factory=list)

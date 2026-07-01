@@ -32,7 +32,7 @@ def _merge_code(app_files: list[CodeFile], token_files: list[CodeFile]) -> list[
 def run_pipeline(generation_input: GenerationInput, llm: LLMAdapter) -> GenerationResult:
     """7단계 에이전트를 순차 실행해 GenerationResult를 생산한다."""
     requirement = agents.requirement_agent(generation_input, llm)
-    ux_plan = agents.ux_planner_agent(requirement, llm)
+    ux_plan = agents.ux_planner_agent(requirement, generation_input, llm)
     design_system = agents.design_system_agent(generation_input, requirement, llm)
     ui = agents.ui_generator_agent(ux_plan, design_system, llm)
     code = agents.code_generator_agent(generation_input, ui, llm)
