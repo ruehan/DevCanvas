@@ -7,6 +7,7 @@ import json
 import pytest
 
 from devcanvas_api.pipeline.design.exporter import (
+    to_code_files,
     to_design_json,
     to_design_md,
     to_tailwind_config,
@@ -137,3 +138,33 @@ def test_exporters_handle_empty_design_system() -> None:
     css = to_tokens_css(empty)
     assert css == ":root {\n}\n"
     assert to_design_md(empty).startswith("# ")
+
+
+# ---------- exporter: to_code_files (파이프라인 연결) ----------
+
+
+def test_to_code_files_produces_five_artifacts(b2b_system: DesignSystem) -> None:
+    files = to_code_files(b2b_system)
+    paths = {f.path for f in files}
+    assert paths == {
+        "lib/tokens.ts",
+        "tailwind.config.json",
+        "design.json",
+        "styles/tokens.css",
+        "design.md",
+    }
+    # 언어 일관성
+    by_path = {f.path: f for f in files}
+    assert by_path["lib/tokens.ts"].language == "ts"
+    assert by_path["tailwind.config.json"].language == "json"
+    assert by_path["styles/tokens.css"].language == "css"
+    assert by_path["design.md"].language == "md"
+    # 내용이 exporter 출력과 일관
+    assert to_tokens_ts(b2b_system) in by_path["lib/tokens.ts"].content
+    assert to_tokens_css(b2b_system) in by_path["styles/tokens.css"].content
+
+
+def test_to_code_files_empty_design_system() -> None:
+    files = to_code_files(DesignSystem())
+    # 빈 토큰이어도 5개 파일은 정상 생성
+    assert len(files) == 5

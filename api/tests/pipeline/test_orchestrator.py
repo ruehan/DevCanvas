@@ -61,3 +61,19 @@ def test_pipeline_design_system_reflects_tone() -> None:
     startup_primary = startup.design_system.tokens.colors["primary"]
     assert b2b_primary != startup_primary
     assert b2b.design_system.tokens.shadows  # shadows 토큰 채워짐
+
+
+def test_pipeline_includes_design_token_files_in_code() -> None:
+    # exporter 산출이 result.code 에 연결되어야 한다 (ADR-0009)
+    result = run_pipeline(GenerationInput(prompt="x", tone=Tone.B2B), DummyLLMAdapter())
+    code_paths = {f.path for f in result.code}
+    assert {
+        "lib/tokens.ts",
+        "tailwind.config.json",
+        "design.json",
+        "styles/tokens.css",
+        "design.md",
+    }.issubset(code_paths)
+    # 톤이 토큰 파일 내용에도 반영되어야 한다
+    tokens_ts = next(f for f in result.code if f.path == "lib/tokens.ts")
+    assert "#2563EB" in tokens_ts.content  # b2b primary
