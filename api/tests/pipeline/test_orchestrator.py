@@ -63,6 +63,17 @@ def test_pipeline_design_system_reflects_tone() -> None:
     assert b2b.design_system.tokens.shadows  # shadows 토큰 채워짐
 
 
+def test_pipeline_ux_plan_state_matrix_complete() -> None:
+    # ux_planner_agent 는 규칙 기반 — 모든 화면에 5상태가 완결 (ADR-0010)
+    result = run_pipeline(
+        GenerationInput(prompt="x", screen_type=ScreenType.DASHBOARD), DummyLLMAdapter()
+    )
+    assert result.ux_plan.screens
+    # 모든 화면이 상태 매트릭스에 존재
+    for screen in result.ux_plan.screens:
+        assert screen.name in result.ux_plan.states
+
+
 def test_pipeline_includes_design_token_files_in_code() -> None:
     # exporter 산출이 result.code 에 연결되어야 한다 (ADR-0009)
     result = run_pipeline(GenerationInput(prompt="x", tone=Tone.B2B), DummyLLMAdapter())

@@ -19,6 +19,7 @@ from devcanvas_api.pipeline.schemas import (
     UIGeneration,
     UXPlan,
 )
+from devcanvas_api.pipeline.ux.planner import build_ux_plan
 
 
 def requirement_agent(generation_input: GenerationInput, llm: LLMAdapter) -> RequirementSpec:
@@ -30,9 +31,14 @@ def requirement_agent(generation_input: GenerationInput, llm: LLMAdapter) -> Req
     )
 
 
-def ux_planner_agent(requirement: RequirementSpec, llm: LLMAdapter) -> UXPlan:
-    instruction = "사용자 흐름, 화면 구조, 상태 매트릭스를 생성하라."
-    return llm.generate(UXPlan, instruction, {"requirement": requirement.model_dump()})
+def ux_planner_agent(
+    requirement: RequirementSpec,
+    generation_input: GenerationInput,
+    llm: LLMAdapter,
+) -> UXPlan:
+    """요구사항에서 화면·State Matrix를 규칙 기반으로 도출한다 (ADR-0010, LLM 미사용)."""
+    del llm  # 규칙 기반
+    return build_ux_plan(requirement, generation_input.screen_type)
 
 
 def design_system_agent(

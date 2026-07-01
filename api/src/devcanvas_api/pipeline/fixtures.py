@@ -16,6 +16,7 @@ from devcanvas_api.pipeline.schemas import (
     ReviewFinding,
     ReviewReport,
     ReviewSeverity,
+    ScreenKind,
     ScreenLayout,
     ScreenSpec,
     ScreenState,
@@ -38,6 +39,7 @@ def ux_plan() -> UXPlan:
         ScreenSpec(
             name="고객 목록",
             purpose="고객 현황을 표 형태로 조회·필터링",
+            kind=ScreenKind.LIST,
             components=["DataTable", "SearchInput", "FilterBar", "StatusBadge"],
             data_columns=["고객명", "결제 상태", "계약일"],
             filters=["결제 상태", "계약 만료 임박"],
@@ -46,6 +48,7 @@ def ux_plan() -> UXPlan:
         ScreenSpec(
             name="고객 상세",
             purpose="단일 고객 정보와 계약/결제 이력",
+            kind=ScreenKind.DETAIL,
             components=["Card", "Tabs", "PaymentHistory", "EmptyState"],
             data_columns=["결제일", "금액", "상태"],
             filters=[],
