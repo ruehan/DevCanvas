@@ -149,16 +149,16 @@ def test_to_code_files_produces_five_artifacts(b2b_system: DesignSystem) -> None
     assert paths == {
         "lib/tokens.ts",
         "tailwind.config.json",
-        "design.json",
+        "tokens/design.json",
         "styles/tokens.css",
-        "design.md",
+        "docs/design.md",
     }
     # 언어 일관성
     by_path = {f.path: f for f in files}
     assert by_path["lib/tokens.ts"].language == "ts"
     assert by_path["tailwind.config.json"].language == "json"
     assert by_path["styles/tokens.css"].language == "css"
-    assert by_path["design.md"].language == "md"
+    assert by_path["docs/design.md"].language == "md"
     # 내용이 exporter 출력과 일관
     assert to_tokens_ts(b2b_system) in by_path["lib/tokens.ts"].content
     assert to_tokens_css(b2b_system) in by_path["styles/tokens.css"].content
