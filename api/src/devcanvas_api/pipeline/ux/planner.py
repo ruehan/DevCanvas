@@ -54,8 +54,10 @@ def build_ux_plan(requirement: RequirementSpec, screen_type: ScreenType) -> UXPl
         states[dash.name] = templates.state(ScreenKind.DASHBOARD, "대시보드")
 
     entities = requirement.data_entities or []
+    labels: list[str] = []
     for entity in entities:
         label = _entity_label(entity)
+        labels.append(label)
         list_screen = _build_screen(
             name=f"{label} 목록",
             purpose=f"{label} 현황을 표 형태로 조회·필터링",
@@ -83,14 +85,28 @@ def build_ux_plan(requirement: RequirementSpec, screen_type: ScreenType) -> UXPl
         screens.append(fallback)
         states[fallback.name] = templates.state(ScreenKind.LIST, "항목")
 
-    flows = _build_flows(screen_type, screens)
+    has_dashboard = screen_type == ScreenType.DASHBOARD
+    flows = _build_flows(labels, has_dashboard, screens)
 
     return UXPlan(screens=screens, flows=flows, states=states)
 
 
-def _build_flows(screen_type: ScreenType, screens: list[ScreenSpec]) -> list[str]:
-    """화면들을 잇는 사용자 흐름을 생성."""
-    names = [s.name for s in screens]
-    if len(names) >= 2:
-        return [" → ".join(names[:3])]  # 주화면 → 목록 → 상세
-    return [names[0]] if names else []
+def _build_flows(
+    entity_labels: list[str], has_dashboard: bool, screens: list[ScreenSpec]
+) -> list[str]:
+    """엔티티별 사용자 흐름을 생성 (ADR-0010).
+
+    각 엔티티마다 [대시보드?] → {엔티티} 목록 → {엔티티} 상세 흐름을 만든다.
+    엔티티가 없으면 주화면 이름만 흐름으로.
+    """
+    flows: list[str] = []
+    for label in entity_labels:
+        chain: list[str] = []
+        if has_dashboard:
+            chain.append("대시보드")
+        chain.append(f"{label} 목록")
+        chain.append(f"{label} 상세")
+        flows.append(" → ".join(chain))
+    if not flows:
+        flows = [screens[0].name] if screens else []
+    return flows
