@@ -9,7 +9,7 @@ from __future__ import annotations
 import json
 from typing import TypeAlias
 
-from devcanvas_api.pipeline.schemas import DesignSystem
+from devcanvas_api.pipeline.schemas import CodeFile, DesignSystem
 
 TokensTree: TypeAlias = dict[str, dict[str, str]]
 TailwindConfig: TypeAlias = dict[str, dict[str, dict[str, dict[str, str]]]]
@@ -97,3 +97,38 @@ def to_design_md(ds: DesignSystem) -> str:
     _table("Typography", t.typography)
     _table("Shadows", t.shadows)
     return "\n".join(sections)
+
+
+def to_code_files(ds: DesignSystem) -> list[CodeFile]:
+    """DesignSystem 토큰을 핸드오프 가능한 코드 파일 5종으로 변환 (ADR-0009).
+
+    산출:
+      - lib/tokens.ts         (TS 모듈)
+      - tailwind.config.json  (Tailwind theme.extend, 루트 — Tailwind 관례)
+      - tokens/design.json    (원본 토큰)
+      - styles/tokens.css     (:root CSS 변수)
+      - docs/design.md        (문서)
+
+    제네릭 루트명(design.md/design.json)은 네임스페이스해 충돌 표면을 줄인다.
+    """
+    return [
+        CodeFile(path="lib/tokens.ts", language="ts", content=to_tokens_ts(ds)),
+        CodeFile(
+            path="tailwind.config.json",
+            language="json",
+            content=json.dumps(to_tailwind_config(ds), ensure_ascii=False, indent=2),
+        ),
+        CodeFile(
+            path="tokens/design.json",
+            language="json",
+            content=json.dumps(to_design_json(ds), ensure_ascii=False, indent=2),
+        ),
+        CodeFile(path="styles/tokens.css", language="css", content=to_tokens_css(ds)),
+        CodeFile(path="docs/design.md", language="md", content=to_design_md(ds)),
+    ]
+
+
+# 토큰 파일 경로 예약어 — code_generator 등 다른 소스와 충돌 방지(ADR-0009)
+RESERVED_TOKEN_PATHS: frozenset[str] = frozenset(
+    f.path for f in to_code_files(DesignSystem())
+)

@@ -1,3 +1,11 @@
+## 2026-07-01 — 디자인 토큰 산출물 파이프라인 연결
+- 브랜치: feat/design-export-wiring
+- 한 일: exporter.to_code_files 로 토큰 파일 5종(tokens.ts/tailwind.config.json/tokens/design.json/styles/tokens.css/docs/design.md)을 CodeFile 로 생성, orchestrator 에서 앱 코드와 병합해 GenerationResult.code 에 포함(ADR-0009). 경로 충돌 가드(_merge_code: 토큰 우선 + 경고 로깅, RESERVED_TOKEN_PATHS).
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 30파일/pytest 41개), web(변경 없음 통과)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-01-디자인-토큰-산출물-파이프라인-연결.md
+- 가정: handoff_agent 가 병합 전 code 를 받아 file_tree·install·guide 에 토큰 파일이 미반영 → handoff 정제 시 해결(ADR-0009에 이관 명시).
+- 관련 결정: docs/decisions/0009 (토큰 산출물 코드 연결 위치)
+
 ## 2026-07-01 — 디자인 시스템 에이전트 상세 구현
 - 브랜치: feat/design-system-agent
 - 한 일: design_system_agent 를 규칙 기반(톤 프리셋)으로 전환(ADR-0008). `pipeline/design/presets.py`(5톤 B2B/minimal/enterprise/startup/friendly) + `exporter.py`(tokens.ts/tailwind.config.json/design.json/tokens.css/design.md 5포맷, 순수함수). DesignTokens.shadows 추가. Tone StrEnum 도입 + 양 스키마(GenerationInput·GenerationRequest) 대소문자 무관 정규화.
