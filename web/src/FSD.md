@@ -17,5 +17,11 @@ src/
 2. 같은 레이어의 슬라이스는 서로 import하지 않는다.
 3. 슬라이스 외부에서는 public API(index.ts)로만 접근.
 
+강제(센서):
+- 규칙 #1(레이어 방향)은 ESLint `eslint-plugin-boundaries`(`boundaries/dependencies`)로
+  자동 검사한다. `.eslintrc.json` 참조. 거꾸로 import(upward)하면 `pnpm lint`가 실패한다.
+- 규칙 #2(동일 레이어 슬라이스 간 import 금지)·#3(public API)은 현재 센서 미구현 →
+  향후 슬라이스 단위 element 정의로 확장 예정.
+
 Next.js App Router와 FSD의 조정: 라우트 파일(`src/app/**`)은 FSD app 레이어의 일부로 본다.
 비즈니스 로직·컴포넌트는 pages/widgets/features/entities/shared에 둔다.

@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from devcanvas_api.core.config import settings
-from devcanvas_api.health.router import router as health_router
+from devcanvas_api.core import settings
+from devcanvas_api.health import router as health_router
 
 
 def create_app() -> FastAPI:

@@ -1,6 +1,69 @@
 {
   "extends": ["next/core-web-vitals"],
+  "plugins": ["boundaries"],
   "rules": {
-    "react/no-unescaped-entities": "off"
+    "react/no-unescaped-entities": "off",
+    "boundaries/dependencies": [
+      "error",
+      {
+        "default": "allow",
+        "rules": [
+          {
+            "from": { "type": "shared" },
+            "disallow": [
+              { "to": { "type": "app" } },
+              { "to": { "type": "pages" } },
+              { "to": { "type": "widgets" } },
+              { "to": { "type": "features" } },
+              { "to": { "type": "entities" } }
+            ]
+          },
+          {
+            "from": { "type": "entities" },
+            "disallow": [
+              { "to": { "type": "app" } },
+              { "to": { "type": "pages" } },
+              { "to": { "type": "widgets" } },
+              { "to": { "type": "features" } }
+            ]
+          },
+          {
+            "from": { "type": "features" },
+            "disallow": [
+              { "to": { "type": "app" } },
+              { "to": { "type": "pages" } },
+              { "to": { "type": "widgets" } }
+            ]
+          },
+          {
+            "from": { "type": "widgets" },
+            "disallow": [
+              { "to": { "type": "app" } },
+              { "to": { "type": "pages" } }
+            ]
+          },
+          {
+            "from": { "type": "pages" },
+            "disallow": [{ "to": { "type": "app" } }]
+          }
+        ]
+      }
+    ]
+  },
+  "settings": {
+    "import/resolver": {
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".ts", ".tsx"]
+      }
+    },
+    "boundaries/elements": [
+      { "type": "app", "mode": "folder", "pattern": "src/app" },
+      { "type": "pages", "mode": "folder", "pattern": "src/pages" },
+      { "type": "widgets", "mode": "folder", "pattern": "src/widgets" },
+      { "type": "features", "mode": "folder", "pattern": "src/features" },
+      { "type": "entities", "mode": "folder", "pattern": "src/entities" },
+      { "type": "shared", "mode": "folder", "pattern": "src/shared" }
+    ]
   }
 }
