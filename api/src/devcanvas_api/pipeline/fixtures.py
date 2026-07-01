@@ -69,9 +69,10 @@ def design_system() -> DesignSystem:
                 "text": "#0F172A",
                 "danger": "#DC2626",
             },
-            spacing={"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px"},
+            spacing={"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px"},
             radius={"sm": "6px", "md": "10px", "lg": "16px"},
             typography={"body": "14px", "heading": "20px"},
+            shadows={"sm": "0 1px 2px rgba(0,0,0,0.06)", "md": "0 4px 12px rgba(0,0,0,0.08)"},
         )
     )
 
@@ -141,5 +142,5 @@ def handoff() -> HandoffDoc:
         ],
         install_commands=["pnpm add @radix-ui/react-tabs"],
         todos=["mock 데이터를 실제 API로 교체", "권한별 분기 추가"],
-        guide_md="# 고객 관리 페이지 구현 가이드\n(생성 뼌대)",
+        guide_md="# 고객 관리 페이지 구현 가이드\n(생성 뼈대)",
     )

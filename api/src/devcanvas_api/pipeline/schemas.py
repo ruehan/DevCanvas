@@ -5,9 +5,19 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # ---------- 입력 ----------
+
+
+class Tone(StrEnum):
+    """디자인 톤 — 소문자 정규화(ADR-0008)."""
+
+    B2B = "b2b"
+    MINIMAL = "minimal"
+    ENTERPRISE = "enterprise"
+    STARTUP = "startup"
+    FRIENDLY = "friendly"
 
 
 class ScreenType(StrEnum):
@@ -18,6 +28,13 @@ class ScreenType(StrEnum):
     INTERNAL_TOOL = "internal_tool"
 
 
+def _normalize_tone(v: object) -> object:
+    """tone 대소문자 무관 정규화("B2B"/"b2b"/"Startup" → 소문자 값). 공통 validator."""
+    if isinstance(v, str) and not isinstance(v, Tone):
+        return v.lower()
+    return v
+
+
 class GenerationInput(BaseModel):
     """사용자 생성 요청 입력."""
 
@@ -26,8 +43,13 @@ class GenerationInput(BaseModel):
     service_type: str = "SaaS"
     role: str = "관리자"
     data_fields: list[str] = Field(default_factory=list)
-    tone: str = "B2B"
+    tone: Tone = Tone.B2B
     stack: str = "Next.js + Tailwind + shadcn/ui"
+
+    @field_validator("tone", mode="before")
+    @classmethod
+    def _normalize_input_tone(cls, v: object) -> object:
+        return _normalize_tone(v)
 
 
 # ---------- 1단계: 요구사항 ----------
@@ -76,6 +98,7 @@ class DesignTokens(BaseModel):
     spacing: dict[str, str] = Field(default_factory=dict)
     radius: dict[str, str] = Field(default_factory=dict)
     typography: dict[str, str] = Field(default_factory=dict)
+    shadows: dict[str, str] = Field(default_factory=dict)
 
 
 class DesignSystem(BaseModel):

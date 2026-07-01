@@ -2,9 +2,15 @@
 
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
-from devcanvas_api.pipeline.schemas import GenerationInput, GenerationResult, ScreenType
+from devcanvas_api.pipeline.schemas import (
+    GenerationInput,
+    GenerationResult,
+    ScreenType,
+    Tone,
+    _normalize_tone,
+)
 
 
 class GenerationRequest(BaseModel):
@@ -15,8 +21,14 @@ class GenerationRequest(BaseModel):
     service_type: str = "SaaS"
     role: str = "관리자"
     data_fields: list[str] = Field(default_factory=list)
-    tone: str = "B2B"
+    tone: Tone = Tone.B2B
     stack: str = "Next.js + Tailwind + shadcn/ui"
+
+    @field_validator("tone", mode="before")
+    @classmethod
+    def _normalize_request_tone(cls, v: object) -> object:
+        # GenerationInput 과 동일 정규화 — API 진입점 계약 일치 (ADR-0008)
+        return _normalize_tone(v)
 
     def to_generation_input(self) -> GenerationInput:
         return GenerationInput(

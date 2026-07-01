@@ -1,3 +1,11 @@
+## 2026-07-01 — 디자인 시스템 에이전트 상세 구현
+- 브랜치: feat/design-system-agent
+- 한 일: design_system_agent 를 규칙 기반(톤 프리셋)으로 전환(ADR-0008). `pipeline/design/presets.py`(5톤 B2B/minimal/enterprise/startup/friendly) + `exporter.py`(tokens.ts/tailwind.config.json/design.json/tokens.css/design.md 5포맷, 순수함수). DesignTokens.shadows 추가. Tone StrEnum 도입 + 양 스키마(GenerationInput·GenerationRequest) 대소문자 무관 정규화.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 30파일/pytest 36개), web(변경 없음 통과)
+- 리뷰: 통과 3라운드 — 상세: docs/reviews/2026-07-01-디자인시스템-에이전트.md
+- 가정: LLM 정제(브랜드 키워드→맞춤 색상)는 향후 확장. exporter 산출을 GenerationResult.code/handoff 에 연결하는 것은 다음 단계.
+- 관련 결정: docs/decisions/0008 (디자인 시스템 에이전트 규칙 기반)
+
 ## 2026-07-01 — GLM 어댑터 + 파이프라인 뼈대
 - 브랜치: feat/glm-adapter-pipeline
 - 한 일: `LLMAdapter` 포트(Protocol) + `DummyLLMAdapter`(deep copy 격리) + `GLMAdapter`(stub) 구현. 7단계 에이전트(requirement/ux_planner/design_system/ui_generator/code_generator/review/handoff) + orchestrator로 end-to-end 파이프라인 구성. `generations` 도메인(FastAPI 도메인 모듈 구조)에 `POST /generations` 엔드포인트 추가 — 더미로 완전한 GenerationResult 생산.
