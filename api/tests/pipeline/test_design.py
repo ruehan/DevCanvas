@@ -22,7 +22,7 @@ from devcanvas_api.pipeline.schemas import DesignSystem
 
 @pytest.fixture()
 def b2b_system() -> DesignSystem:
-    return build_design_system(tone="B2B")
+    return build_design_system(tone="b2b")
 
 
 # ---------- presets ----------
@@ -42,15 +42,28 @@ def test_each_tone_builds_full_tokens(tone: str) -> None:
         assert key in t.colors
 
 
+@pytest.mark.parametrize("tone", list(SUPPORTED_TONES))
+def test_each_tone_preset_has_all_keys(tone: str) -> None:
+    # TypedDict 런타임 검증 없음 → 키 존재 명시 단언
+    ds = build_design_system(tone=tone)
+    for group in ("colors", "typography", "shadows"):
+        assert getattr(ds.tokens, group), f"{tone}.{group} 비어있음"
+
+
 def test_different_tones_yield_different_palettes() -> None:
-    b2b = build_design_system(tone="B2B")
+    b2b = build_design_system(tone="b2b")
     startup = build_design_system(tone="startup")
     assert b2b.tokens.colors["primary"] != startup.tokens.colors["primary"]
 
 
-def test_unknown_tone_falls_back() -> None:
+def test_tone_is_case_insensitive() -> None:
+    assert build_design_system("B2B").tokens.colors == build_design_system("b2b").tokens.colors
+
+
+def test_unknown_tone_falls_back_to_b2b() -> None:
     ds = build_design_system(tone="존재안함")
-    assert ds.tokens.colors  # 폴백 preset 으로도 토큰 생성
+    # 실제로 b2b 폴백인지(고정 primary) 검증 — 단순 truthy 아님
+    assert ds.tokens.colors["primary"] == "#2563EB"
 
 
 # ---------- exporter: tokens.ts ----------
@@ -72,6 +85,8 @@ def test_tailwind_config_maps_to_theme_extend(b2b_system: DesignSystem) -> None:
     assert extend["colors"]["primary"] == b2b_system.tokens.colors["primary"]
     # spacing 스케일 키 그대로
     assert set(extend["spacing"]) == set(b2b_system.tokens.spacing)
+    # fontSize: typography 시맨틱 키 그대로 매핑(의도 — docstring 참조)
+    assert extend["fontSize"]["body"] == b2b_system.tokens.typography["body"]
     # JSON 직렬화 가능(문자열 값)
     json.dumps(cfg)
 
@@ -105,3 +120,20 @@ def test_design_md_documents_tokens(b2b_system: DesignSystem) -> None:
     assert md.startswith("# ")
     assert "Colors" in md or "색상" in md
     assert b2b_system.tokens.colors["primary"] in md
+
+
+# ---------- exporter: 빈 DesignSystem 엣지 ----------
+
+
+def test_exporters_handle_empty_design_system() -> None:
+    empty = DesignSystem()
+    # 모든 필드가 빈 dict 여도 예외 없이 빈 구조 반환
+    data = to_design_json(empty)
+    assert set(data["tokens"]) == {"colors", "spacing", "radius", "typography", "shadows"}
+    assert all(v == {} for v in data["tokens"].values())
+    assert "export const tokens" in to_tokens_ts(empty)
+    cfg = to_tailwind_config(empty)
+    assert cfg["theme"]["extend"]["colors"] == {}
+    css = to_tokens_css(empty)
+    assert css == ":root {\n}\n"
+    assert to_design_md(empty).startswith("# ")

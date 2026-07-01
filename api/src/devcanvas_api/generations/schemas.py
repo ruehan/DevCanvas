@@ -4,7 +4,12 @@ from __future__ import annotations
 
 from pydantic import BaseModel, Field
 
-from devcanvas_api.pipeline.schemas import GenerationInput, GenerationResult, ScreenType
+from devcanvas_api.pipeline.schemas import (
+    GenerationInput,
+    GenerationResult,
+    ScreenType,
+    Tone,
+)
 
 
 class GenerationRequest(BaseModel):
@@ -15,7 +20,7 @@ class GenerationRequest(BaseModel):
     service_type: str = "SaaS"
     role: str = "관리자"
     data_fields: list[str] = Field(default_factory=list)
-    tone: str = "B2B"
+    tone: Tone = Tone.B2B
     stack: str = "Next.js + Tailwind + shadcn/ui"
 
     def to_generation_input(self) -> GenerationInput:

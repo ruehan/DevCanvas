@@ -6,7 +6,7 @@ import pytest
 
 from devcanvas_api.pipeline.llm import DummyLLMAdapter
 from devcanvas_api.pipeline.orchestrator import run_pipeline
-from devcanvas_api.pipeline.schemas import GenerationInput, ScreenType
+from devcanvas_api.pipeline.schemas import GenerationInput, ScreenType, Tone
 
 
 @pytest.fixture()
@@ -55,8 +55,8 @@ def test_pipeline_with_empty_prompt_still_runs() -> None:
 
 def test_pipeline_design_system_reflects_tone() -> None:
     # design_system_agent 는 규칙 기반이므로 톤이 결과에 반영되어야 한다 (ADR-0008)
-    b2b = run_pipeline(GenerationInput(prompt="x", tone="B2B"), DummyLLMAdapter())
-    startup = run_pipeline(GenerationInput(prompt="x", tone="startup"), DummyLLMAdapter())
+    b2b = run_pipeline(GenerationInput(prompt="x", tone=Tone.B2B), DummyLLMAdapter())
+    startup = run_pipeline(GenerationInput(prompt="x", tone=Tone.STARTUP), DummyLLMAdapter())
     b2b_primary = b2b.design_system.tokens.colors["primary"]
     startup_primary = startup.design_system.tokens.colors["primary"]
     assert b2b_primary != startup_primary

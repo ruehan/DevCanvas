@@ -5,9 +5,19 @@ from __future__ import annotations
 from enum import StrEnum
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 # ---------- 입력 ----------
+
+
+class Tone(StrEnum):
+    """디자인 톤 — 소문자 정규화(ADR-0008)."""
+
+    B2B = "b2b"
+    MINIMAL = "minimal"
+    ENTERPRISE = "enterprise"
+    STARTUP = "startup"
+    FRIENDLY = "friendly"
 
 
 class ScreenType(StrEnum):
@@ -26,8 +36,16 @@ class GenerationInput(BaseModel):
     service_type: str = "SaaS"
     role: str = "관리자"
     data_fields: list[str] = Field(default_factory=list)
-    tone: str = "B2B"
+    tone: Tone = Tone.B2B
     stack: str = "Next.js + Tailwind + shadcn/ui"
+
+    @field_validator("tone", mode="before")
+    @classmethod
+    def _normalize_tone(cls, v: object) -> object:
+        # 대소문자 무관 정규화("B2B"/"b2b"/"Startup" → 소문자 값)
+        if isinstance(v, str) and not isinstance(v, Tone):
+            return v.lower()
+        return v
 
 
 # ---------- 1단계: 요구사항 ----------

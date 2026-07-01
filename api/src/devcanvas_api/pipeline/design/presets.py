@@ -6,9 +6,12 @@
 
 from __future__ import annotations
 
+import logging
 from typing import TypedDict
 
 from devcanvas_api.pipeline.schemas import DesignSystem, DesignTokens
+
+logger = logging.getLogger(__name__)
 
 # 공통 spacing/radius 스케일 — 톤 무관 일관성 유지
 _SPACING = {"xs": "4px", "sm": "8px", "md": "16px", "lg": "24px", "xl": "32px"}
@@ -22,7 +25,7 @@ class TonePreset(TypedDict):
 
 
 _TONE_PRESETS: dict[str, TonePreset] = {
-    "B2B": {
+    "b2b": {
         "colors": {
             "primary": "#2563EB",
             "background": "#F8FAFC",
@@ -93,15 +96,20 @@ _TONE_PRESETS: dict[str, TonePreset] = {
 }
 
 SUPPORTED_TONES = frozenset(_TONE_PRESETS)
-_FALLBACK_TONE = "B2B"
+_FALLBACK_TONE = "b2b"
 
 
-def build_design_system(tone: str) -> DesignSystem:
+def build_design_system(tone: object) -> DesignSystem:
     """톤에 해당하는 프리셋으로 DesignSystem 을 생성한다.
 
-    알 수 없는 톤은 _FALLBACK_TONE(B2B)으로 폴백한다.
+    - 대소문자 무관 정규화(str(tone).lower()).
+    - 알 수 없는 톤은 _FALLBACK_TONE(b2b)으로 폴백하되 경고 로깅(ADR-0008).
     """
-    preset = _TONE_PRESETS.get(tone, _TONE_PRESETS[_FALLBACK_TONE])
+    key = str(tone).lower()
+    if key not in _TONE_PRESETS:
+        logger.warning("알 수 없는 톤 %r → 폴백 %r", key, _FALLBACK_TONE)
+        key = _FALLBACK_TONE
+    preset = _TONE_PRESETS[key]
     tokens = DesignTokens(
         colors=dict(preset["colors"]),
         spacing=dict(_SPACING),

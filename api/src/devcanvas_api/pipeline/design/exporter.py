@@ -7,11 +7,24 @@
 from __future__ import annotations
 
 import json
+from typing import TypeAlias
 
 from devcanvas_api.pipeline.schemas import DesignSystem
 
+TokensTree: TypeAlias = dict[str, dict[str, str]]
+TailwindConfig: TypeAlias = dict[str, dict[str, dict[str, dict[str, str]]]]
 
-def _tokens_dict(ds: DesignSystem) -> dict[str, dict[str, str]]:
+# CSS 변수 접두사 — 카테고리(복수) → 시맨틱 단수
+_CSS_PREFIX: dict[str, str] = {
+    "colors": "color",
+    "spacing": "spacing",
+    "radius": "radius",
+    "typography": "font",
+    "shadows": "shadow",
+}
+
+
+def _tokens_dict(ds: DesignSystem) -> TokensTree:
     t = ds.tokens
     return {
         "colors": dict(t.colors),
@@ -22,7 +35,7 @@ def _tokens_dict(ds: DesignSystem) -> dict[str, dict[str, str]]:
     }
 
 
-def to_design_json(ds: DesignSystem) -> dict[str, dict[str, dict[str, str]]]:
+def to_design_json(ds: DesignSystem) -> dict[str, TokensTree]:
     """원본 토큰 딕셔너리(JSON 직렬화 가능)."""
     return {"tokens": _tokens_dict(ds)}
 
@@ -33,8 +46,12 @@ def to_tokens_ts(ds: DesignSystem) -> str:
     return f"export const tokens = {body} as const;\n"
 
 
-def to_tailwind_config(ds: DesignSystem) -> dict[str, dict[str, dict[str, dict[str, str]]]]:
-    """Tailwind theme.extend 매핑."""
+def to_tailwind_config(ds: DesignSystem) -> TailwindConfig:
+    """Tailwind theme.extend 매핑.
+
+    typography 시맨틱(body/heading/caption)을 fontSize 키로 그대로 사용한다
+    (text-body/text-heading/text-caption 클래스 의도). xs~lg 스케일이 아님에 주의.
+    """
     t = ds.tokens
     return {
         "theme": {
@@ -49,20 +66,11 @@ def to_tailwind_config(ds: DesignSystem) -> dict[str, dict[str, dict[str, dict[s
     }
 
 
-_CSS_PREFIX = {
-    "colors": "color",
-    "spacing": "spacing",
-    "radius": "radius",
-    "typography": "font",
-    "shadows": "shadow",
-}
-
-
 def to_tokens_css(ds: DesignSystem) -> str:
     """:root CSS 변수 형태. 시맨틱 단수 접두사(--color-*, --spacing-*, --font-* ...)."""
     lines: list[str] = [":root {"]
     for category, entries in _tokens_dict(ds).items():
-        prefix = _CSS_PREFIX.get(category, category)
+        prefix = _CSS_PREFIX[category]
         for key, value in entries.items():
             lines.append(f"  --{prefix}-{key}: {value};")
     lines.append("}")
