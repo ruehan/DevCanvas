@@ -1,3 +1,11 @@
+## 2026-07-01 — UX/스크린/상태매트릭스 에이전트 상세 구현
+- 브랜치: feat/ux-planner-agent
+- 한 일: ux_planner_agent 를 규칙 기반으로 전환(ADR-0010). `pipeline/ux/{planner,templates}.py` — ScreenKind(list/detail/dashboard) 도입, 종류별 components/state 템플릿(엔티티 매개변수화). build_ux_plan: screen_type 주화면(DASHBOARD만 대시보드) + 각 data_entity×{list,detail}, 엔티티별 flows. State Matrix 5상태(loading/empty/error/permission/mobile) 전 화면 완결 보장.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 34파일/pytest 59개), web(변경 없음 통과)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-01-ux-플래너-에이전트.md
+- 가정: requirement_agent(1단계)는 여전히 LLM/더미 — 그 data_entities 소비. _entity_label 하드코딩 매핑(미지정 패스스루), 향후 LLM/매핑 확장.
+- 관련 결정: docs/decisions/0010 (UX 플래너 규칙 기반)
+
 ## 2026-07-01 — 디자인 토큰 산출물 파이프라인 연결
 - 브랜치: feat/design-export-wiring
 - 한 일: exporter.to_code_files 로 토큰 파일 5종(tokens.ts/tailwind.config.json/tokens/design.json/styles/tokens.css/docs/design.md)을 CodeFile 로 생성, orchestrator 에서 앱 코드와 병합해 GenerationResult.code 에 포함(ADR-0009). 경로 충돌 가드(_merge_code: 토큰 우선 + 경고 로깅, RESERVED_TOKEN_PATHS).
