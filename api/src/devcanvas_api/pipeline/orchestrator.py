@@ -7,7 +7,12 @@ import logging
 from devcanvas_api.pipeline import agents
 from devcanvas_api.pipeline.design.exporter import to_code_files
 from devcanvas_api.pipeline.llm import LLMAdapter
-from devcanvas_api.pipeline.schemas import CodeFile, GenerationInput, GenerationResult
+from devcanvas_api.pipeline.schemas import (
+    CodeFile,
+    CodeGeneration,
+    GenerationInput,
+    GenerationResult,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -36,12 +41,16 @@ def run_pipeline(generation_input: GenerationInput, llm: LLMAdapter) -> Generati
     design_system = agents.design_system_agent(generation_input, requirement, llm)
     ui = agents.ui_generator_agent(ux_plan, design_system, llm)
     code = agents.code_generator_agent(generation_input, ui, llm)
-    review = agents.review_agent(ui, code, llm)
-    handoff = agents.handoff_agent(code, review, llm)
 
-    # 디자인 토큰 산출물을 코드 파일에 병합 (ADR-0009)
+    # 디자인 토큰 산출물을 코드 파일에 병합 (ADR-0009).
+    # handoff 가 토큰 파일까지 file_tree/guide 에 반영하도록 병합을 handoff 호출 전으로 둔다
+    # (ADR-0016).
     token_files = to_code_files(design_system)
-    code_files = _merge_code(code.files, token_files)
+    merged_code = CodeGeneration(files=_merge_code(code.files, token_files))
+
+    # review 는 토큰(결정적 산출)을 린트할 필요 없으므로 병합 전 code 사용
+    review = agents.review_agent(ui, code, llm)
+    handoff = agents.handoff_agent(merged_code, review, llm)
 
     return GenerationResult(
         input=generation_input,
@@ -49,7 +58,7 @@ def run_pipeline(generation_input: GenerationInput, llm: LLMAdapter) -> Generati
         ux_plan=ux_plan,
         design_system=design_system,
         ui=ui,
-        code=code_files,
+        code=merged_code.files,
         review=review.findings,
         handoff=handoff,
     )

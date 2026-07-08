@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Literal
 
 from devcanvas_api.pipeline.code import templates
+from devcanvas_api.pipeline.naming import pascal_to_kebab
 from devcanvas_api.pipeline.schemas import CodeFile, CodeGeneration, ScreenKind, UIGeneration
 
 
@@ -28,7 +29,7 @@ def build_code_generation(ui: UIGeneration) -> CodeGeneration:
             list_slugs.append(templates._slug_from_screen(layout, index))
 
     for comp in sorted(stub_components):
-        stub_path = f"components/{templates.pascal_to_kebab(comp)}.tsx"
+        stub_path = f"components/{pascal_to_kebab(comp)}.tsx"
         _add(stub_path, "tsx", templates.component_stub(comp))
 
     unique_slugs: list[str] = []

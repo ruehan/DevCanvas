@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import re
 
+from devcanvas_api.pipeline.naming import kebab_to_pascal, pascal_to_kebab
 from devcanvas_api.pipeline.schemas import ScreenKind, ScreenLayout
 
 # 화면명 한글 라벨 → URL slug 역매핑
@@ -20,16 +21,6 @@ _LABEL_TO_SLUG: dict[str, str] = {
     "항목": "item",
     "대시보드": "dashboard",
 }
-
-
-def pascal_to_kebab(name: str) -> str:
-    """PascalCase → kebab-case (FilterBar → filter-bar)."""
-    s1 = re.sub(r"(.)([A-Z][a-z]+)", r"\1-\2", name)
-    return re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", s1).lower()
-
-
-def _kebab_to_pascal(kebab: str) -> str:
-    return "".join(part.capitalize() for part in kebab.split("-"))
 
 
 def _slug_from_screen(layout: ScreenLayout, index: int) -> str:
@@ -57,7 +48,7 @@ def page_component_name(layout: ScreenLayout, index: int) -> str:
     if layout.kind == ScreenKind.DASHBOARD:
         return "DashboardPage"
     slug = _slug_from_screen(layout, index)
-    entity = _kebab_to_pascal(slug)
+    entity = kebab_to_pascal(slug)
     if layout.kind == ScreenKind.DETAIL:
         return f"{entity}DetailPage"
     return f"{entity}ListPage"
@@ -74,7 +65,7 @@ def page_code(layout: ScreenLayout, index: int) -> str:
     )
     body_components = "\n      ".join(f"<{c} />" for c in unique_components)
     slug = _slug_from_screen(layout, index)
-    entity_type = _kebab_to_pascal(slug)
+    entity_type = kebab_to_pascal(slug)
 
     if kind == ScreenKind.LIST:
         return f"""'use client';
@@ -138,7 +129,7 @@ def types_code(entity_slugs: list[str]) -> str:
     """lib/types.ts — 엔티티별 인터페이스."""
     lines = ["// 자동 생성된 타입 정의 (실제 스키마로 교체 필요)", ""]
     for slug in entity_slugs:
-        entity = _kebab_to_pascal(slug)
+        entity = kebab_to_pascal(slug)
         lines.append(f"export interface {entity} {{")
         lines.append("  id: string;")
         lines.append('  name: string;')
@@ -153,7 +144,7 @@ def mock_data_code(entity_slugs: list[str]) -> str:
     """lib/mock-data.ts — 엔티티별 mock 배열."""
     lines = ["// 자동 생성된 mock 데이터 (실제 API 응답으로 교체 필요)", ""]
     for slug in entity_slugs:
-        entity = _kebab_to_pascal(slug)
+        entity = kebab_to_pascal(slug)
         lines.append(f"export const mock{entity}s = [")
         lines.append("  { id: '1', name: '샘플', status: 'active', createdAt: '2026-01-01' },")
         lines.append("  { id: '2', name: '샘플2', status: 'pending', createdAt: '2026-01-02' },")
