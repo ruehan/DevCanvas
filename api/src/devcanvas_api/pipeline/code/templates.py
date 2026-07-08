@@ -42,52 +42,37 @@ def _slug_from_screen(layout: ScreenLayout, index: int) -> str:
     ascii_parts = re.findall(r"[a-zA-Z0-9]+", base)
     if ascii_parts:
         return "-".join(p.lower() for p in ascii_parts)
-    return f"{layout_screen_kind(layout).value}-{index}"
-
-
-def layout_screen_kind(layout: ScreenLayout) -> ScreenKind:
-    """layout 문자열 첫 토큰으로 kind 역추론(0011 정합 규칙 역용).
-
-    page 템플릿 선택에 kind 가 필요하나 ScreenLayout 은 kind 를 안 가짐 →
-    component_tree 의 대표 컴포넌트로 판별.
-    """
-    tree = set(layout.component_tree)
-    if "KpiCard" in tree:
-        return ScreenKind.DASHBOARD
-    if "DataTable" in tree:
-        return ScreenKind.LIST
-    return ScreenKind.DETAIL
+    return f"{layout.kind.value}-{index}"
 
 
 def page_path(layout: ScreenLayout, index: int) -> str:
-    kind = layout_screen_kind(layout)
-    slug = _slug_from_screen(layout, index)
-    if kind == ScreenKind.DASHBOARD:
+    if layout.kind == ScreenKind.DASHBOARD:
         return "app/dashboard/page.tsx"
-    if kind == ScreenKind.DETAIL:
-        return f"app/{slug}/[id]/page.tsx"
-    return f"app/{slug}/page.tsx"
+    if layout.kind == ScreenKind.DETAIL:
+        return f"app/{_slug_from_screen(layout, index)}/[id]/page.tsx"
+    return f"app/{_slug_from_screen(layout, index)}/page.tsx"
 
 
 def page_component_name(layout: ScreenLayout, index: int) -> str:
-    kind = layout_screen_kind(layout)
-    if kind == ScreenKind.DASHBOARD:
+    if layout.kind == ScreenKind.DASHBOARD:
         return "DashboardPage"
     slug = _slug_from_screen(layout, index)
     entity = _kebab_to_pascal(slug)
-    if kind == ScreenKind.DETAIL:
+    if layout.kind == ScreenKind.DETAIL:
         return f"{entity}DetailPage"
     return f"{entity}ListPage"
 
 
 def page_code(layout: ScreenLayout, index: int) -> str:
-    kind = layout_screen_kind(layout)
+    kind = layout.kind
     comp_name = page_component_name(layout, index)
+    # 중복 컴포넌트 제거(등장순 유지)
+    unique_components = list(dict.fromkeys(layout.component_tree))
     imports = "\n".join(
         f'import {{ {c} }} from "@/components/{pascal_to_kebab(c)}";'
-        for c in layout.component_tree
+        for c in unique_components
     )
-    body_components = "\n      ".join(f"<{c} />" for c in layout.component_tree)
+    body_components = "\n      ".join(f"<{c} />" for c in unique_components)
     slug = _slug_from_screen(layout, index)
     entity_type = _kebab_to_pascal(slug)
 

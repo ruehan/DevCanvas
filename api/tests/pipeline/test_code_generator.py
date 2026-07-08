@@ -101,3 +101,50 @@ def test_all_files_are_tsx_or_ts(dashboard_ui: UIGeneration) -> None:
     gen = build_code_generation(dashboard_ui)
     for f in gen.files:
         assert f.language in ("tsx", "ts")
+
+
+def test_no_duplicate_file_paths(dashboard_ui: UIGeneration) -> None:
+    # 중복 엔티티/경로 회귀 방지 (리뷰 P1-2)
+    gen = build_code_generation(dashboard_ui)
+    paths = [f.path for f in gen.files]
+    assert len(paths) == len(set(paths))
+
+
+def test_kind_preserved_through_ui_to_code() -> None:
+    # round-trip: ux kind → ui ScreenLayout.kind → code page_path 정합 (리뷰 P1-1)
+    from devcanvas_api.pipeline.code import templates as ct
+    from devcanvas_api.pipeline.schemas import ScreenKind
+
+    plan = build_ux_plan(
+        RequirementSpec(data_entities=["Customer"]), ScreenType.DASHBOARD
+    )
+    ui = build_ui_generation(plan)
+    # dashboard layout → dashboard path
+    dash = next(lay for lay in ui.layouts if lay.kind == ScreenKind.DASHBOARD)
+    assert ct.page_path(dash, 0) == "app/dashboard/page.tsx"
+    # list layout → list path
+    list_lay = next(lay for lay in ui.layouts if lay.kind == ScreenKind.LIST)
+    assert ct.page_path(list_lay, 1) == "app/customer/page.tsx"
+    # detail layout → detail path
+    detail_lay = next(lay for lay in ui.layouts if lay.kind == ScreenKind.DETAIL)
+    assert ct.page_path(detail_lay, 2) == "app/customer/[id]/page.tsx"
+
+
+def test_every_stub_is_imported_by_some_page(dashboard_ui: UIGeneration) -> None:
+    # 역방향 정합 — 생성된 스텁은 모두 어떤 page 에서 import 되어야 (리뷰 P2-1)
+    gen = build_code_generation(dashboard_ui)
+    stub_paths = {f.path for f in gen.files if f.path.startswith("components/")}
+    imported: set[str] = set()
+    for page in (f for f in gen.files if f.path.endswith("page.tsx")):
+        kebabs = re.findall(r'@/components/([a-z0-9-]+)', page.content)
+        imported |= {f"components/{kebab}.tsx" for kebab in kebabs}
+    assert stub_paths == imported
+
+
+def test_admin_empty_requirement_uses_item_slug() -> None:
+    # 엔티티 없는 ADMIN → 폴백 "항목 목록" → app/item/page.tsx (리뷰 P2-2)
+    ui = build_ui_generation(build_ux_plan(RequirementSpec(), ScreenType.ADMIN))
+    gen = build_code_generation(ui)
+    paths = {f.path for f in gen.files}
+    assert "app/item/page.tsx" in paths
+    assert "interface Item" in next(f.content for f in gen.files if f.path == "lib/types.ts")

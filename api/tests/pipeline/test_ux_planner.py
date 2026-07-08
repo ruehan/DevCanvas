@@ -130,12 +130,20 @@ def test_dashboard_flow_prefixes_dashboard(sample_requirement: RequirementSpec) 
 
 
 def test_admin_empty_requirement_falls_back_to_single_list() -> None:
-    # ADMIN + 엔티티 없음 → 폴백 "목록" 단일 화면 (리뷰 P2-3)
+    # ADMIN + 엔티티 없음 → 폴백 "항목 목록" 단일 화면 (리뷰 P2-3)
     plan = build_ux_plan(RequirementSpec(), ScreenType.ADMIN)
     assert len(plan.screens) == 1
     assert plan.screens[0].kind == ScreenKind.LIST
     assert plan.screens[0].name in plan.states
-    assert plan.flows == ["목록"]
+    assert plan.flows == ["항목 목록"]
+
+
+def test_admin_empty_requirement_dedups_entities() -> None:
+    # 중복 엔티티는 한 번만 화면 생성 (리뷰 P1-2 근본 원인)
+    req = RequirementSpec(data_entities=["Customer", "Customer"])
+    plan = build_ux_plan(req, ScreenType.ADMIN)
+    lists = [s for s in plan.screens if s.kind == ScreenKind.LIST]
+    assert len(lists) == 1  # 중복 제거
 
 
 def test_internal_tool_treated_as_list_no_dashboard(

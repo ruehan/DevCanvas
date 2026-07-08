@@ -12,6 +12,7 @@ def build_ui_generation(ux_plan: UXPlan) -> UIGeneration:
         ScreenLayout(
             screen=screen.name,
             layout=templates.layout(screen.kind),
+            kind=screen.kind,
             component_tree=templates.component_tree(screen.kind),
         )
         for screen in ux_plan.screens

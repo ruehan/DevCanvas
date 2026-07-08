@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import Literal
+
 from devcanvas_api.pipeline.code import templates
 from devcanvas_api.pipeline.schemas import CodeFile, CodeGeneration, ScreenKind, UIGeneration
 
@@ -9,50 +11,33 @@ from devcanvas_api.pipeline.schemas import CodeFile, CodeGeneration, ScreenKind,
 def build_code_generation(ui: UIGeneration) -> CodeGeneration:
     """UIGeneration(layouts)에서 page.tsx + 컴포넌트 스텁 + types/mock 코드를 생성한다."""
     files: list[CodeFile] = []
+    seen_paths: set[str] = set()
     stub_components: set[str] = set()
     list_slugs: list[str] = []
 
-    for index, layout in enumerate(ui.layouts):
-        # page.tsx
-        files.append(
-            CodeFile(
-                path=templates.page_path(layout, index),
-                language="tsx",
-                content=templates.page_code(layout, index),
-            )
-        )
-        stub_components.update(layout.component_tree)
+    def _add(path: str, language: Literal["tsx", "ts", "css", "json", "md"], content: str) -> None:
+        if path in seen_paths:  # 중복 엔티티 등에 의한 동일 경로 회피
+            return
+        seen_paths.add(path)
+        files.append(CodeFile(path=path, language=language, content=content))
 
-        # list 화면의 slug 수집 → types/mock 엔티티
-        if templates.layout_screen_kind(layout) == ScreenKind.LIST:
+    for index, layout in enumerate(ui.layouts):
+        _add(templates.page_path(layout, index), "tsx", templates.page_code(layout, index))
+        stub_components.update(layout.component_tree)
+        if layout.kind == ScreenKind.LIST:
             list_slugs.append(templates._slug_from_screen(layout, index))
 
-    # 컴포넌트 스텁 (유니크)
     for comp in sorted(stub_components):
-        files.append(
-            CodeFile(
-                path=f"components/{templates.pascal_to_kebab(comp)}.tsx",
-                language="tsx",
-                content=templates.component_stub(comp),
-            )
-        )
+        stub_path = f"components/{templates.pascal_to_kebab(comp)}.tsx"
+        _add(stub_path, "tsx", templates.component_stub(comp))
 
-    # types/mock (중복 slug 제거)
     unique_slugs: list[str] = []
     seen: set[str] = set()
     for slug in list_slugs:
         if slug not in seen:
             seen.add(slug)
             unique_slugs.append(slug)
-    files.append(
-        CodeFile(path="lib/types.ts", language="ts", content=templates.types_code(unique_slugs))
-    )
-    files.append(
-        CodeFile(
-            path="lib/mock-data.ts",
-            language="ts",
-            content=templates.mock_data_code(unique_slugs),
-        )
-    )
+    _add("lib/types.ts", "ts", templates.types_code(unique_slugs))
+    _add("lib/mock-data.ts", "ts", templates.mock_data_code(unique_slugs))
 
     return CodeGeneration(files=files)

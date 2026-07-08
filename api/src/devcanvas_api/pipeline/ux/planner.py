@@ -54,8 +54,16 @@ def build_ux_plan(requirement: RequirementSpec, screen_type: ScreenType) -> UXPl
         states[dash.name] = templates.state(ScreenKind.DASHBOARD, "대시보드")
 
     entities = requirement.data_entities or []
+    # 중복 엔티티 제거(등장순 유지) — 동일 화면/경로 중복 방지
+    seen_entities: set[str] = set()
+    unique_entities: list[str] = []
+    for e in entities:
+        if e not in seen_entities:
+            seen_entities.add(e)
+            unique_entities.append(e)
+
     labels: list[str] = []
-    for entity in entities:
+    for entity in unique_entities:
         label = _entity_label(entity)
         labels.append(label)
         list_screen = _build_screen(
@@ -77,7 +85,7 @@ def build_ux_plan(requirement: RequirementSpec, screen_type: ScreenType) -> UXPl
     # 엔티티가 없고 dashboard도 아니면(admin/internal_tool) 기본 목록 화면 보장
     if not screens:
         fallback = _build_screen(
-            name="목록",
+            name="항목 목록",
             purpose="데이터 목록 조회·필터링",
             kind=ScreenKind.LIST,
             entity="항목",
