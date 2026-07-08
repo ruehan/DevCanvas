@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from devcanvas_api.pipeline.schemas import CodeGeneration, HandoffDoc, ReviewReport
 
-# 컴포넌트(스텁) → npm 패키지 매핑. 새 의존은 여기에 추가.
+# 컴포넌트(스텁) → 외부 npm 패키지 매핑. shadcn/ui 기본 제공(Tabs/Card 등)은 제외.
+# 새 외부 의존은 여기에 추가.
 _KNOWN_DEPS: dict[str, str] = {
-    "Tabs": "@radix-ui/react-tabs",
     "DataTable": "@tanstack/react-table",
     "Chart": "recharts",
 }
@@ -64,7 +64,10 @@ def _build_guide(
         lines.append("(추가 패키지 없음)")
     lines.append("")
     lines.append("## TODO")
-    lines.extend(f"- {t}" for t in todos) if todos else lines.append("- (없음)")
+    if todos:
+        lines.extend(f"- {t}" for t in todos)
+    else:
+        lines.append("- (없음)")
     lines.append("")
     p1 = [f for f in review.findings if f.severity.value == "P1"]
     if p1:

@@ -37,10 +37,10 @@ def test_install_commands_detect_known_deps(generated: tuple[CodeGeneration, Rev
     code, _ = generated
     handoff = build_handoff(code, ReviewReport())
     joined = " ".join(handoff.install_commands)
-    # Chart→recharts, DataTable→@tanstack/react-table, Tabs→@radix-ui/react-tabs
+    # Chart→recharts, DataTable→@tanstack/react-table. Tabs 는 shadcn 기본 제공이므로 제외.
     assert "recharts" in joined
     assert "@tanstack/react-table" in joined
-    assert "@radix-ui/react-tabs" in joined
+    assert "@radix-ui/react-tabs" not in joined
 
 
 def test_todos_include_review_p1(generated: tuple[CodeGeneration, ReviewReport]) -> None:
@@ -53,9 +53,9 @@ def test_todos_include_review_p1(generated: tuple[CodeGeneration, ReviewReport])
 def test_todos_include_standard_items(generated: tuple[CodeGeneration, ReviewReport]) -> None:
     code, _ = generated
     handoff = build_handoff(code, ReviewReport())
-    joined = " ".join(handoff.todos)
-    # 컴포넌트 스텁 TODO + mock 데이터 교체 표준 항목
-    assert "컴포넌트" in joined or "구현" in joined
+    # 표준 항목이 구체적으로 들어있어야 (P1 finding 의 "구현" 에 우연히 걸리지 않게)
+    assert any("mock 데이터" in t for t in handoff.todos)
+    assert any("shadcn/ui" in t for t in handoff.todos)
 
 
 def test_guide_md_documents_structure(generated: tuple[CodeGeneration, ReviewReport]) -> None:

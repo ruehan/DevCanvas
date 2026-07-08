@@ -95,6 +95,17 @@ def test_pipeline_review_produces_findings() -> None:
     assert "state" in categories  # 상태 분기 TODO → P1
 
 
+def test_pipeline_handoff_includes_token_files() -> None:
+    # 핸드오프가 토큰 병합본을 받아 file_tree 에 토큰 파일 포함 (ADR-0009/0016 갭 해소)
+    result = run_pipeline(
+        GenerationInput(prompt="x", screen_type=ScreenType.DASHBOARD), DummyLLMAdapter()
+    )
+    tree = set(result.handoff.file_tree)
+    assert "lib/tokens.ts" in tree
+    assert "tailwind.config.json" in tree
+    assert "styles/tokens.css" in tree
+
+
 def test_pipeline_includes_design_token_files_in_code() -> None:
     # exporter 산출이 result.code 에 연결되어야 한다 (ADR-0009)
     result = run_pipeline(GenerationInput(prompt="x", tone=Tone.B2B), DummyLLMAdapter())
