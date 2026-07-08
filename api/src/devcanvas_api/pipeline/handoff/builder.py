@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from devcanvas_api.pipeline.naming import kebab_to_pascal
 from devcanvas_api.pipeline.schemas import CodeGeneration, HandoffDoc, ReviewReport
 
 # 컴포넌트(스텁) → 외부 npm 패키지 매핑. shadcn/ui 기본 제공(Tabs/Card 등)은 제외.
@@ -12,10 +13,6 @@ _KNOWN_DEPS: dict[str, str] = {
 }
 
 
-def _kebab_to_pascal(kebab: str) -> str:
-    return "".join(part.capitalize() for part in kebab.split("-"))
-
-
 def _detect_install_commands(code: CodeGeneration) -> list[str]:
     packages: list[str] = []
     seen: set[str] = set()
@@ -24,7 +21,7 @@ def _detect_install_commands(code: CodeGeneration) -> list[str]:
             continue
         # components/filter-bar.tsx → FilterBar
         name = f.path.split("/", 1)[1].removesuffix(".tsx")
-        pascal = _kebab_to_pascal(name)
+        pascal = kebab_to_pascal(name)
         pkg = _KNOWN_DEPS.get(pascal)
         if pkg and pkg not in seen:
             seen.add(pkg)
