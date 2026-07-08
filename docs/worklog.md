@@ -1,3 +1,11 @@
+## 2026-07-08 — 핸드오프 정제(ADR-0009 갭 해소)
+- 브랜치: feat/handoff-rule-based
+- 한 일: handoff_agent 를 규칙 기반으로 전환(ADR-0016). build_handoff(code, review) — file_tree(코드 경로 정렬), install_commands(컴포넌트 스텁→외부 의존 tanstack/recharts 검출, shadcn 기본 제공 제외), TODO(review P1 + mock 교체 + 스텁 구현), guide_md. 오케스트레이터 토큰 병합을 handoff 호출 전으로 이동 → 토큰 파일 5종이 file_tree/guide 에 반영(ADR-0009 갭 실제 해소). naming 공용 모듈로 변환 통일.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 50파일/pytest 108개), web(변경 없음)
+- 리뷰: 통과 3라운드 — 상세: docs/reviews/2026-07-08-핸드오프-정제.md
+- 가정: review_agent 는 토큰(결정적 산출) 린트 불필요 → 병합 전 code 사용. 이제 7에이전트 전부 규칙 기반(requirement만 LLM/더미).
+- 관련 결정: docs/decisions/0016 (핸드오프 규칙 기반)
+
 ## 2026-07-08 — Sandpack 통합(milestone #7)
 - 브랜치: feat/sandpack-preview
 - 한 일: Preview 탭 Sandpack 실시간 프리뷰(ADR-0015). 자급자족 구조 프리뷰 — component_tree 박스 렌더 + State Matrix(default/loading/empty/error) 인터랙티브 토글. buildSandpackFiles 순수 함수(JSON.stringify 로 코드 인젝션 차단). next/dynamic ssr:false 로 로드. @codesandbox/sandpack-react 추가.
