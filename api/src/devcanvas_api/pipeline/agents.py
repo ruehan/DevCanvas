@@ -19,6 +19,7 @@ from devcanvas_api.pipeline.schemas import (
     UIGeneration,
     UXPlan,
 )
+from devcanvas_api.pipeline.ui.generator import build_ui_generation
 from devcanvas_api.pipeline.ux.planner import build_ux_plan
 
 
@@ -56,12 +57,12 @@ def design_system_agent(
 def ui_generator_agent(
     ux_plan: UXPlan, design_system: DesignSystem, llm: LLMAdapter
 ) -> UIGeneration:
-    instruction = "화면별 레이아웃과 컴포넌트 트리를 생성하라."
-    return llm.generate(
-        UIGeneration,
-        instruction,
-        {"ux_plan": ux_plan.model_dump(), "design_system": design_system.model_dump()},
-    )
+    """UXPlan 에서 화면별 레이아웃·컴포넌트 트리를 규칙 기반 도출 (ADR-0011, LLM 미사용).
+
+    design_system/llm 은 파이프라인 시그니처 일관성을 위해 유지하되 현재 미사용.
+    """
+    del design_system, llm
+    return build_ui_generation(ux_plan)
 
 
 def code_generator_agent(

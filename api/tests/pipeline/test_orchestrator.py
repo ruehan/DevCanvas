@@ -74,6 +74,17 @@ def test_pipeline_ux_plan_state_matrix_complete() -> None:
         assert screen.name in result.ux_plan.states
 
 
+def test_pipeline_ui_layouts_match_screens() -> None:
+    # ui_generator_agent 는 규칙 기반 — 화면마다 레이아웃 1:1 (ADR-0011)
+    result = run_pipeline(
+        GenerationInput(prompt="x", screen_type=ScreenType.DASHBOARD), DummyLLMAdapter()
+    )
+    assert len(result.ui.layouts) == len(result.ux_plan.screens)
+    layout_screens = {lay.screen for lay in result.ui.layouts}
+    plan_screens = {s.name for s in result.ux_plan.screens}
+    assert layout_screens == plan_screens
+
+
 def test_pipeline_includes_design_token_files_in_code() -> None:
     # exporter 산출이 result.code 에 연결되어야 한다 (ADR-0009)
     result = run_pipeline(GenerationInput(prompt="x", tone=Tone.B2B), DummyLLMAdapter())
