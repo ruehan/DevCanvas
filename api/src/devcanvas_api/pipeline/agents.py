@@ -7,6 +7,7 @@
 
 from __future__ import annotations
 
+from devcanvas_api.pipeline.code.generator import build_code_generation
 from devcanvas_api.pipeline.design.presets import build_design_system
 from devcanvas_api.pipeline.llm import LLMAdapter
 from devcanvas_api.pipeline.schemas import (
@@ -68,12 +69,12 @@ def ui_generator_agent(
 def code_generator_agent(
     generation_input: GenerationInput, ui: UIGeneration, llm: LLMAdapter
 ) -> CodeGeneration:
-    instruction = "지정된 스택 기준으로 React 코드 파일을 생성하라."
-    return llm.generate(
-        CodeGeneration,
-        instruction,
-        {"stack": generation_input.stack, "ui": ui.model_dump()},
-    )
+    """UIGeneration 에서 코드 파일을 규칙 기반 생성 (ADR-0012, LLM 미사용).
+
+    generation_input/llm 은 시그니처 일관성을 위해 유지하되 현재 미사용.
+    """
+    del generation_input, llm
+    return build_code_generation(ui)
 
 
 def review_agent(
