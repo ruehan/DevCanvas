@@ -18,6 +18,8 @@
 - **API 클라이언트**: `shared/api/generations.ts` 의 `createGeneration(req)`. base URL 은
   `NEXT_PUBLIC_API_BASE_URL`(기본 http://localhost:8000).
 - **백엔드 CORS**: FastAPI `CORSMiddleware` 추가(dev 에서 Next 3000 → API 8000 허용).
+  origins 는 `settings.cors_origins`(기본 dev 전체 허용)로 제어, 프로덕션은 환경변수
+  `DEVCANVAS_CORS_ORIGINS`(JSON 배열)로 제한.
 - **테스트 환경**: vitest environment 를 jsdom 으로 전환, @testing-library/react 추가.
   순수 로직(reducer/api/mapper)은 단위 테스트, 컴포넌트는 렌더 스모크 테스트.
 

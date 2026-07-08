@@ -29,4 +29,8 @@ describe("features/generate-ui/model/reducer", () => {
   it("loading 중 아닐 때 success 는 무시", () => {
     expect(generationReducer(idle, { type: "success", result })).toEqual(idle);
   });
+
+  it("loading 중 아닐 때 error 도 무시(reset 후 지연 에러 방어)", () => {
+    expect(generationReducer(idle, { type: "error", error: "boom" })).toEqual(idle);
+  });
 });

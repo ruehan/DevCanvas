@@ -1,3 +1,11 @@
+## 2026-07-08 — 프론트 입력 UI + 결과 뷰 + /generations 연동
+- 브랜치: feat/frontend-generate-ui
+- 한 일: milestone #6. FSD 구조(app/widgets/features/shared) 적용. shared/types(스키마 미러), shared/api(createGeneration), shared/config(env lazy). features/generate-ui(useReducer 순수 reducer + 폼). widgets/result-viewer(7탭: Preview/Screens/States/DesignSystem/Code/Review/Export). app/page.tsx 조립. 백엔드 CORS(ADR-0014, cors_origins 설정화). vitest jsdom + @testing-library/react.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 46파일/pytest 101개, CORS 테스트), web(tsc/lint/vitest 17개)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-08-프론트-generate-ui.md
+- 가정: Sandpack 프리뷰(#7) 전이라 Preview 탭은 코드 표시로 대체. WAI-ARIA 풀 패턴·fetch 타임아웃은 #7에서. TS 타입은 백엔드 수동 미러(향후 OpenAPI→TS 여지).
+- 관련 결정: docs/decisions/0014 (프론트 FSD·generations 연동)
+
 ## 2026-07-08 — 리뷰 에이전트 상세 구현
 - 브랜치: feat/review-agent
 - 한 일: review_agent 를 규칙 기반 린트로 전환(ADR-0013). `pipeline/review/{checks,reviewer}.py` — check_state(P1)/check_any_type(P1, `: any`/`as any`/`<any>`)/check_a11y(P2)/check_component_stubs(P2)/check_mock_usage(P2). run_review 가 모든 파일×체크 집계. 패턴매칭 기반(위양성/위음성 한계, 향후 AST).
