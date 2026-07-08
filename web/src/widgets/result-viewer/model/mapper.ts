@@ -1,4 +1,4 @@
-import type { GenerationResult } from "@/shared/types/schemas";
+import type { GenerationResult } from "@/shared/types";
 
 export interface ResultTab {
   label: string;

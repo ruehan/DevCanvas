@@ -1,5 +1,5 @@
 import { env } from "@/shared/config";
-import type { GenerationRequest, GenerationResult } from "@/shared/types/schemas";
+import type { GenerationRequest, GenerationResult } from "@/shared/types";
 
 /**
  * POST /generations 호출. base 가 주어지면 env 기본값을 덮어쓴다.

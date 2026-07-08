@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { createGeneration } from "./generations";
-import type { GenerationRequest } from "@/shared/types/schemas";
+import type { GenerationRequest } from "@/shared/types";
 
 describe("shared/api/generations", () => {
   beforeEach(() => {

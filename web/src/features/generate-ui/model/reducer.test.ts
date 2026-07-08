@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { generationReducer, type GenerationState } from "./reducer";
-import type { GenerationResult } from "@/shared/types/schemas";
+import type { GenerationResult } from "@/shared/types";
 
 const result = { input: { prompt: "x" } } as GenerationResult;
 

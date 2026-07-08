@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { buildTabs } from "./mapper";
-import type { GenerationResult } from "@/shared/types/schemas";
+import type { GenerationResult } from "@/shared/types";
 
 const sample = {
   input: { prompt: "x" },

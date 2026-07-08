@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { GenerationForm } from "./generation-form";
-import type { GenerationRequest } from "@/shared/types/schemas";
+import type { GenerationRequest } from "@/shared/types";
 
 describe("GenerationForm", () => {
   it("폼 필드와 제출 버튼을 렌더한다", () => {

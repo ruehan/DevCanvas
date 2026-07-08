@@ -4,7 +4,7 @@ import { useReducer } from "react";
 import { GenerationForm } from "@/features/generate-ui";
 import { initialState, generationReducer } from "@/features/generate-ui";
 import { createGeneration } from "@/shared/api";
-import type { GenerationRequest } from "@/shared/types/schemas";
+import type { GenerationRequest } from "@/shared/types";
 import { ResultViewer } from "@/widgets/result-viewer";
 
 export default function HomePage() {

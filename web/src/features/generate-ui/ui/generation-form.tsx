@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { GenerationRequest, ScreenType, Tone } from "@/shared/types/schemas";
+import type { GenerationRequest, ScreenType, Tone } from "@/shared/types";
 
 const SCREEN_TYPES: ScreenType[] = ["admin", "dashboard", "internal_tool"];
 const TONES: Tone[] = ["b2b", "minimal", "enterprise", "startup", "friendly"];

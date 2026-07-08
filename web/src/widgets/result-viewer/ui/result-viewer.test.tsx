@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { ResultViewer } from "./result-viewer";
-import type { GenerationResult } from "@/shared/types/schemas";
+import type { GenerationResult } from "@/shared/types";
 
 const sample = {
   input: { prompt: "x" },

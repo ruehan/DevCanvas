@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import type { GenerationResult } from "@/shared/types/schemas";
+import type { GenerationResult } from "@/shared/types";
 import { buildTabs } from "@/widgets/result-viewer/model";
 
 interface ResultViewerProps {
@@ -189,7 +189,7 @@ function ReviewPanel({ result }: { result: GenerationResult }) {
   return (
     <ul className="space-y-2">
       {result.review.map((f, i) => (
-        <li key={i} className="rounded border p-2 text-sm">
+        <li key={`${f.severity}-${f.category}-${i}`} className="rounded border p-2 text-sm">
           <span
             className={
               "mr-2 rounded px-1 text-xs " +
@@ -222,8 +222,8 @@ function ExportPanel({ result }: { result: GenerationResult }) {
       <div>
         <h4 className="font-medium">TODO</h4>
         <ul className="list-disc pl-5">
-          {result.handoff.todos.map((t) => (
-            <li key={t}>{t}</li>
+          {result.handoff.todos.map((t, i) => (
+            <li key={`${t}-${i}`}>{t}</li>
           ))}
         </ul>
       </div>
