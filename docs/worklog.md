@@ -1,3 +1,11 @@
+## 2026-07-08 — 코드 생성 에이전트 상세 구현
+- 브랜치: feat/code-generator-agent
+- 한 일: code_generator_agent 를 규칙 기반 스켈레톤으로 전환(ADR-0012). `pipeline/code/{generator,templates}.py` — page.tsx(화면수) + 컴포넌트 스텁(유니크) + lib/types.ts + lib/mock-data.ts. ScreenLayout.kind 도입(ui→code 정합). 경로 규약: dashboard/list/detail, 한글 라벨 역매핑(고객→customer), 엔티티 dedup, 폴백 "항목 목록"→item. 정합 회귀망(round-trip/역방향 stub/no-duplicate).
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 42파일/pytest 88개), web(변경 없음 통과)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-08-코드-생성-에이전트.md
+- 가정: 컴포넌트 본체는 TODO(향후 LLM/검증루프). page→컴포넌트 경로 정합을 테스트로 고정(0011 교훈 반영).
+- 관련 결정: docs/decisions/0012 (코드 생성 에이전트 규칙 기반 스켈레톤)
+
 ## 2026-07-08 — UI 생성 에이전트 상세 구현
 - 브랜치: feat/ui-generator-agent
 - 한 일: ui_generator_agent 를 규칙 기반으로 전환(ADR-0011). `pipeline/ui/{generator,templates}.py` — 종류별 layout(공간 배치)·component_tree(렌더 순서). build_ui_generation: UXPlan.screens 와 1:1 ScreenLayout. 정합 규칙: component_tree ⊆ screen.components, layout 토큰 == component_tree(회귀망으로 고정).
