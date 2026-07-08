@@ -88,8 +88,9 @@ def check_mock_usage(f: CodeFile) -> list[ReviewFinding]:
 
 
 def check_any_type(f: CodeFile) -> list[ReviewFinding]:
-    """any 타입 사용."""
-    if ": any" in f.content:
+    """any 타입 사용 (`: any`, `as any`, `<any>`)."""
+    patterns = (": any", " as any", "<any>")
+    if any(p in f.content for p in patterns):
         return [
             ReviewFinding(
                 severity=_P1,

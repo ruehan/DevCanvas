@@ -64,6 +64,51 @@ def test_any_type_detected() -> None:
     assert any(f.category == "types" and "any" in f.message for f in report.findings)
 
 
+def test_any_type_as_any_detected() -> None:
+    # `as any` 형태도 잡아야 (리뷰 P2)
+    code = CodeGeneration(
+        files=[
+            CodeFile(
+                path="app/x/page.tsx", language="tsx", content="const x = data as any;\n"
+            )
+        ]
+    )
+    report = run_review(code)
+    assert any(f.category == "types" for f in report.findings)
+
+
+def test_state_missing_entirely_detected() -> None:
+    # check_state 분기 (a): 상태 키워드가 아예 없음 → P1 (리뷰 P2)
+    code = CodeGeneration(
+        files=[
+            CodeFile(
+                path="app/x/page.tsx",
+                language="tsx",
+                content="export default function P(){return <div>hello</div>;}\n",
+            )
+        ]
+    )
+    report = run_review(code)
+    state = [f for f in report.findings if f.category == "state"]
+    assert state
+    assert "전혀 없음" in state[0].message
+
+
+def test_checks_skip_non_target_paths() -> None:
+    # non-page 파일은 state/a11y/mock 체크 대상 아님; non-components 는 component 체크 대상 아님
+    code = CodeGeneration(
+        files=[
+            CodeFile(path="lib/util.ts", language="ts", content="export const x = 1;\n")
+        ]
+    )
+    report = run_review(code)
+    categories = {f.category for f in report.findings}
+    assert "state" not in categories
+    assert "a11y" not in categories
+    assert "component" not in categories
+    assert "data" not in categories
+
+
 def test_a11y_missing_aria_flagged() -> None:
     code = CodeGeneration(
         files=[
