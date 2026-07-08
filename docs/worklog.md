@@ -1,3 +1,11 @@
+## 2026-07-08 — Sandpack 통합(milestone #7)
+- 브랜치: feat/sandpack-preview
+- 한 일: Preview 탭 Sandpack 실시간 프리뷰(ADR-0015). 자급자족 구조 프리뷰 — component_tree 박스 렌더 + State Matrix(default/loading/empty/error) 인터랙티브 토글. buildSandpackFiles 순수 함수(JSON.stringify 로 코드 인젝션 차단). next/dynamic ssr:false 로 로드. @codesandbox/sandpack-react 추가.
+- 검증: verify-all.sh EXIT 0 — web(tsc/lint/vitest 27개), api(변경 없음)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-08-sandpack-프리뷰.md
+- 가정: 생성 page.tsx(@/alias+shadcn 의존)은 Sandpack 직접 실행 불가 → 구조 프리뷰로 대체. 실제 shadcn 시각 프리뷰는 향후 Storybook/WebContainers. permission/mobile 토글은 향후 스토리.
+- 관련 결정: docs/decisions/0015 (Sandpack 자급자족 프리뷰), 0004 (Sandpack 기반)
+
 ## 2026-07-08 — 프론트 입력 UI + 결과 뷰 + /generations 연동
 - 브랜치: feat/frontend-generate-ui
 - 한 일: milestone #6. FSD 구조(app/widgets/features/shared) 적용. shared/types(스키마 미러), shared/api(createGeneration), shared/config(env lazy). features/generate-ui(useReducer 순수 reducer + 폼). widgets/result-viewer(7탭: Preview/Screens/States/DesignSystem/Code/Review/Export). app/page.tsx 조립. 백엔드 CORS(ADR-0014, cors_origins 설정화). vitest jsdom + @testing-library/react.

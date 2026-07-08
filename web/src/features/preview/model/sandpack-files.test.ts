@@ -67,6 +67,8 @@ describe("features/preview/model/sandpack-files", () => {
     expect(code).toContain('"Foo</div><script>"');
     // JSX string expression 형태: {"<리터럴>"}
     expect(code).toContain('{"DataTable{alert(\'xss\')}"');
+    // 보안 의도 명시(bare 텍스트로 시작하는 block 은 없어야)
+    expect(code).not.toMatch(/<div className="block">[^{]/);
   });
 
   it("title 의 특수문자가 JSX 요소/표현식이 아닌 문자열 리터럴로 들어간다", () => {
