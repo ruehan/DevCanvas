@@ -85,6 +85,16 @@ def test_pipeline_ui_layouts_match_screens() -> None:
     assert layout_screens == plan_screens
 
 
+def test_pipeline_review_produces_findings() -> None:
+    # review_agent 는 규칙 기반 린트 — 생성 코드에서 findings 생산 (ADR-0013)
+    result = run_pipeline(
+        GenerationInput(prompt="x", screen_type=ScreenType.DASHBOARD), DummyLLMAdapter()
+    )
+    assert result.review  # 생성 코드엔 TODO/mock 등 리뷰 대상
+    categories = {f.category for f in result.review}
+    assert "state" in categories  # 상태 분기 TODO → P1
+
+
 def test_pipeline_includes_design_token_files_in_code() -> None:
     # exporter 산출이 result.code 에 연결되어야 한다 (ADR-0009)
     result = run_pipeline(GenerationInput(prompt="x", tone=Tone.B2B), DummyLLMAdapter())
