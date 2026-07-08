@@ -1,3 +1,11 @@
+## 2026-07-08 — 리뷰 에이전트 상세 구현
+- 브랜치: feat/review-agent
+- 한 일: review_agent 를 규칙 기반 린트로 전환(ADR-0013). `pipeline/review/{checks,reviewer}.py` — check_state(P1)/check_any_type(P1, `: any`/`as any`/`<any>`)/check_a11y(P2)/check_component_stubs(P2)/check_mock_usage(P2). run_review 가 모든 파일×체크 집계. 패턴매칭 기반(위양성/위음성 한계, 향후 AST).
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 46파일/pytest 102개), web(변경 없음 통과)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-08-리뷰-에이전트.md
+- 가정: LLM 맥락 판단(UX 흐름 등)은 향후 추가. 현재는 "반드시 잡을 것" 보장.
+- 관련 결정: docs/decisions/0013 (리뷰 에이전트 규칙 기반 린트)
+
 ## 2026-07-08 — 코드 생성 에이전트 상세 구현
 - 브랜치: feat/code-generator-agent
 - 한 일: code_generator_agent 를 규칙 기반 스켈레톤으로 전환(ADR-0012). `pipeline/code/{generator,templates}.py` — page.tsx(화면수) + 컴포넌트 스텁(유니크) + lib/types.ts + lib/mock-data.ts. ScreenLayout.kind 도입(ui→code 정합). 경로 규약: dashboard/list/detail, 한글 라벨 역매핑(고객→customer), 엔티티 dedup, 폴백 "항목 목록"→item. 정합 회귀망(round-trip/역방향 stub/no-duplicate).
