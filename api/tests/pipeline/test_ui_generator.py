@@ -51,11 +51,21 @@ def test_layout_differs_by_kind(dashboard_plan: UXPlan) -> None:
 
 @pytest.mark.parametrize("kind", list(ScreenKind))
 def test_each_kind_has_layout_template(kind: ScreenKind) -> None:
-    # 모든 종류가 배치 템플릿을 갖는다
     from devcanvas_api.pipeline.ui import templates as t
 
     assert t.layout(kind)
-    assert t.component_tree(kind)
+    assert len(t.component_tree(kind)) >= 1
+
+
+@pytest.mark.parametrize("kind", list(ScreenKind))
+def test_component_tree_subset_of_screen_components(kind: ScreenKind) -> None:
+    # component_tree 는 상위 screen.components 의 부분집합이어야 한다 (리뷰 P1)
+    from devcanvas_api.pipeline.ui import templates as ui_templates
+    from devcanvas_api.pipeline.ux import templates as ux_templates
+
+    tree = set(ui_templates.component_tree(kind))
+    components = set(ux_templates.components(kind))
+    assert tree <= components
 
 
 def test_empty_plan_yields_empty_generation() -> None:

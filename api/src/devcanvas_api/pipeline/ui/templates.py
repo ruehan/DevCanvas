@@ -16,7 +16,7 @@ _LAYOUTS: dict[ScreenKind, str] = {
 
 _COMPONENT_TREES: dict[ScreenKind, list[str]] = {
     ScreenKind.LIST: ["FilterBar", "DataTable", "Pagination"],
-    ScreenKind.DETAIL: ["Header", "Tabs"],
+    ScreenKind.DETAIL: ["Card", "Tabs"],
     ScreenKind.DASHBOARD: ["KpiCard", "Chart", "RecentActivityTable"],
 }
 
