@@ -13,10 +13,10 @@ from devcanvas_api.health import router as health_router
 def create_app() -> FastAPI:
     """FastAPI 애플리케이션을 생성한다."""
     app = FastAPI(title=settings.app_name, debug=settings.debug)
-    # CORS — dev(Next 3000 → API 8000) 허용. 프로덕션은 origins 제한 필요(ADR-0014).
+    # CORS — origins 는 settings.cors_origins 에서 제어(ADR-0014). dev 기본 전체 허용.
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],
+        allow_origins=settings.cors_origins,
         allow_methods=["*"],
         allow_headers=["*"],
     )

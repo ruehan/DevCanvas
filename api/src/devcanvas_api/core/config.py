@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     debug: bool = False
     glm_api_key: str | None = None
     glm_api_base: str | None = None
+    # CORS 허용 origin 목록(dev 기본 전체 허용). 프로덕션은 환경변수로 제한(ADR-0014).
+    cors_origins: list[str] = ["*"]
 
 
 settings = Settings()
