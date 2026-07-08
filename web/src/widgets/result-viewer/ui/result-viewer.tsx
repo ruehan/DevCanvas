@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import dynamic from "next/dynamic";
 import type { GenerationResult } from "@/shared/types";
 import { buildTabs } from "@/widgets/result-viewer/model";
+
+// Sandpack 은 브라우저 API 사용 → SSR 비활성 동적 로드 (ADR-0015)
+const SandpackPreviewView = dynamic(
+  () => import("@/features/preview/ui").then((m) => m.SandpackPreviewView),
+  { ssr: false, loading: () => <p className="text-sm text-gray-500">프리뷰 로드 중...</p> },
+);
 
 interface ResultViewerProps {
   result: GenerationResult;
@@ -53,18 +60,34 @@ export function ResultViewer({ result }: ResultViewerProps) {
 }
 
 function PreviewPanel({ result }: { result: GenerationResult }) {
-  // Sandpack 연동 전(ADR-0014): 페이지 코드를 텍스트로 표시
-  const pages = result.code.filter((f) => f.path.endsWith("page.tsx"));
+  const layouts = result.ui.layouts;
+  const [selectedScreen, setSelectedScreen] = useState(layouts[0]?.screen ?? "");
+  const layout = layouts.find((l) => l.screen === selectedScreen) ?? layouts[0];
+  if (!layout) {
+    return <p className="text-sm text-gray-500">프리뷰할 화면이 없습니다.</p>;
+  }
+  const state = result.ux_plan.states[layout.screen];
   return (
-    <div className="text-sm text-gray-600">
-      <p className="mb-2">
-        미리보기는 Sandpack 연동(milestone #7) 전까지 페이지 코드로 대체 표시합니다.
-      </p>
-      <ul className="list-disc pl-5">
-        {pages.map((p) => (
-          <li key={p.path}>{p.path}</li>
-        ))}
-      </ul>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 text-sm">
+        <label htmlFor="preview-screen">화면:</label>
+        <select
+          id="preview-screen"
+          value={selectedScreen}
+          onChange={(e) => setSelectedScreen(e.target.value)}
+          className="rounded border p-1"
+        >
+          {layouts.map((l) => (
+            <option key={l.screen} value={l.screen}>
+              {l.screen} ({l.kind})
+            </option>
+          ))}
+        </select>
+        <span className="text-xs text-gray-500">
+          상태(default/loading/empty/error) 토글은 프리뷰 안에서
+        </span>
+      </div>
+      <SandpackPreviewView layout={layout} state={state} />
     </div>
   );
 }
