@@ -85,13 +85,15 @@ def ui_generation() -> UIGeneration:
         layouts=[
             ScreenLayout(
                 screen="고객 목록",
-                layout="FilterBar 상단 + DataTable 본문 + 페이지네이션",
-                component_tree=["FilterBar", "DataTable", "StatusBadge", "Pagination"],
+                layout="FilterBar(검색·필터) 상단 → DataTable 본문 → Pagination 하단",
+                kind=ScreenKind.LIST,
+                component_tree=["FilterBar", "DataTable", "Pagination"],
             ),
             ScreenLayout(
                 screen="고객 상세",
-                layout="Header + Tabs(PaymentHistory|Contract)",
-                component_tree=["Card", "Tabs", "PaymentHistory", "EmptyState"],
+                layout="Card(제목·액션) 상단 → Tabs(이력·메모) 본문",
+                kind=ScreenKind.DETAIL,
+                component_tree=["Card", "Tabs"],
             ),
         ]
     )

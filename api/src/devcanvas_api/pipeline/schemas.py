@@ -120,6 +120,7 @@ class DesignSystem(BaseModel):
 class ScreenLayout(BaseModel):
     screen: str
     layout: str
+    kind: ScreenKind = ScreenKind.LIST
     component_tree: list[str] = Field(default_factory=list)
 
 
