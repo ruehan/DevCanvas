@@ -1,3 +1,11 @@
+## 2026-07-08 — UI 생성 에이전트 상세 구현
+- 브랜치: feat/ui-generator-agent
+- 한 일: ui_generator_agent 를 규칙 기반으로 전환(ADR-0011). `pipeline/ui/{generator,templates}.py` — 종류별 layout(공간 배치)·component_tree(렌더 순서). build_ui_generation: UXPlan.screens 와 1:1 ScreenLayout. 정합 규칙: component_tree ⊆ screen.components, layout 토큰 == component_tree(회귀망으로 고정).
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 38파일/pytest 72개), web(변경 없음 통과)
+- 리뷰: 통과 4라운드 — 상세: docs/reviews/2026-07-08-ui-생성-에이전트.md
+- 가정: 종류별 고정 템플릿(다양성 없음)은 의도적 — code_generator 입력으로 충분. LLM 정제(브랜드 맞춤 변형)는 향후.
+- 관련 결정: docs/decisions/0011 (UI 생성 에이전트 규칙 기반)
+
 ## 2026-07-01 — UX/스크린/상태매트릭스 에이전트 상세 구현
 - 브랜치: feat/ux-planner-agent
 - 한 일: ux_planner_agent 를 규칙 기반으로 전환(ADR-0010). `pipeline/ux/{planner,templates}.py` — ScreenKind(list/detail/dashboard) 도입, 종류별 components/state 템플릿(엔티티 매개변수화). build_ux_plan: screen_type 주화면(DASHBOARD만 대시보드) + 각 data_entity×{list,detail}, 엔티티별 flows. State Matrix 5상태(loading/empty/error/permission/mobile) 전 화면 완결 보장.
