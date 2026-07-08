@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from devcanvas_api.pipeline.code.generator import build_code_generation
 from devcanvas_api.pipeline.design.presets import build_design_system
+from devcanvas_api.pipeline.handoff.builder import build_handoff
 from devcanvas_api.pipeline.llm import LLMAdapter
 from devcanvas_api.pipeline.review.reviewer import run_review
 from devcanvas_api.pipeline.schemas import (
@@ -92,9 +93,6 @@ def review_agent(
 def handoff_agent(
     code: CodeGeneration, review: ReviewReport, llm: LLMAdapter
 ) -> HandoffDoc:
-    instruction = "개발자가 바로 쓸 수 있는 파일 구조·설치 명령·TODO·구현 가이드를 생성하라."
-    return llm.generate(
-        HandoffDoc,
-        instruction,
-        {"code": code.model_dump(), "review": review.model_dump()},
-    )
+    """code/review 에서 파일 트리·설치·TODO·가이드를 규칙 기반 유도 (ADR-0016, LLM 미사용)."""
+    del llm
+    return build_handoff(code, review)
