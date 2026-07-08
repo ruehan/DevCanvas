@@ -1,1 +1,1 @@
-export { buildSandpackFiles, type SandpackFiles } from "./sandpack-files";
+export { buildSandpackFiles, type PreviewFiles } from "./sandpack-files";

@@ -5,9 +5,9 @@ import dynamic from "next/dynamic";
 import type { GenerationResult } from "@/shared/types";
 import { buildTabs } from "@/widgets/result-viewer/model";
 
-// Sandpack 은 브라우저 API 사용 → SSR 비활성 동적 로드 (ADR-0015)
+// Sandpack 은 브라우저 API 사용 → SSR 비활성 동적 로드 (ADR-0015). 슬라이스 public API 경유.
 const SandpackPreviewView = dynamic(
-  () => import("@/features/preview/ui").then((m) => m.SandpackPreviewView),
+  () => import("@/features/preview").then((m) => m.SandpackPreviewView),
   { ssr: false, loading: () => <p className="text-sm text-gray-500">프리뷰 로드 중...</p> },
 );
 
