@@ -10,6 +10,7 @@ from __future__ import annotations
 from devcanvas_api.pipeline.code.generator import build_code_generation
 from devcanvas_api.pipeline.design.presets import build_design_system
 from devcanvas_api.pipeline.llm import LLMAdapter
+from devcanvas_api.pipeline.review.reviewer import run_review
 from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
     DesignSystem,
@@ -80,12 +81,12 @@ def code_generator_agent(
 def review_agent(
     ui: UIGeneration, code: CodeGeneration, llm: LLMAdapter
 ) -> ReviewReport:
-    instruction = "접근성·반응형·상태 누락·일관성을 검사하라."
-    return llm.generate(
-        ReviewReport,
-        instruction,
-        {"ui": ui.model_dump(), "code": code.model_dump()},
-    )
+    """생성 코드를 결정적 린트 체크로 검사 (ADR-0013, LLM 미사용).
+
+    ui/llm 은 시그니처 일관성을 위해 유지하되 현재 미사용.
+    """
+    del ui, llm
+    return run_review(code)
 
 
 def handoff_agent(
