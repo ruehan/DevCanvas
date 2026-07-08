@@ -10,7 +10,7 @@ from devcanvas_api.pipeline.schemas import ScreenKind
 
 _LAYOUTS: dict[ScreenKind, str] = {
     ScreenKind.LIST: "FilterBar(검색·필터) 상단 → DataTable 본문 → Pagination 하단",
-    ScreenKind.DETAIL: "Header(제목·액션) 상단 → Tabs(이력·메모) 본문",
+    ScreenKind.DETAIL: "Card(제목·액션) 상단 → Tabs(이력·메모) 본문",
     ScreenKind.DASHBOARD: "KpiCard 행 상단 → Chart 중간 → RecentActivityTable 하단",
 }
 

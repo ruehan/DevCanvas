@@ -71,3 +71,12 @@ def test_component_tree_subset_of_screen_components(kind: ScreenKind) -> None:
 def test_empty_plan_yields_empty_generation() -> None:
     gen = build_ui_generation(UXPlan())
     assert gen.layouts == []
+
+
+def test_component_tree_subset_of_screen_components_at_runtime(
+    dashboard_plan: UXPlan,
+) -> None:
+    # runtime 정합 — 생성된 각 layout 의 tree 가 해당 화면 components 의 부분집합 (리뷰 P2)
+    gen = build_ui_generation(dashboard_plan)
+    for layout, screen in zip(gen.layouts, dashboard_plan.screens, strict=True):
+        assert set(layout.component_tree) <= set(screen.components)
