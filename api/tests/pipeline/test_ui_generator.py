@@ -68,6 +68,17 @@ def test_component_tree_subset_of_screen_components(kind: ScreenKind) -> None:
     assert tree <= components
 
 
+@pytest.mark.parametrize("kind", list(ScreenKind))
+def test_layout_segment_tokens_equal_component_tree(kind: ScreenKind) -> None:
+    # layout 각 세그먼트의 첫 토큰(컴포넌트명)이 component_tree 집합과 일치 (리뷰 P2)
+    # 가짜 컴포넌트명(예: 존재 않는 "Header")이 layout 에 끼는 회귀를 잡는다.
+    from devcanvas_api.pipeline.ui import templates as t
+
+    segments = [s.strip() for s in t.layout(kind).split("→") if s.strip()]
+    tokens = {seg.split("(")[0].split()[0] for seg in segments}
+    assert tokens == set(t.component_tree(kind))
+
+
 def test_empty_plan_yields_empty_generation() -> None:
     gen = build_ui_generation(UXPlan())
     assert gen.layouts == []
