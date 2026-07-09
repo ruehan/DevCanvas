@@ -155,7 +155,7 @@ def main() -> int:
                 print(f"  [{i + 1}] requirement 실패")
 
     if not args.skip_edit:
-        print("\n▶ 편집 턴(apply_edit → GenerationResult 전체 재생성)")
+        print("\n▶ 편집 턴(apply_edit → 부분 패치 병합, ADR-0023)")
         for i in range(args.runs):
             observe_edit(glm, edit_stats)
             print(f"  [{i + 1}] edit {'OK' if edit_stats.outcomes['ok'] else '실패'}")

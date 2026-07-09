@@ -1,3 +1,11 @@
+## 2026-07-09 — 편집 부분 패치 방식 (ADR-0023, ADR-0018 대체) — 실 edit 최초 성공
+- 브랜치: feat/edit-patch
+- 한 일: 편집을 전체 재생성 → 부분 패치로 전환. `GenerationResultPatch`(전 필드 Optional) 신설 — LLM 이 변경 최상위 섹션만 반환. `edit_agent`: apply_edit = generate(patch, include_schema=False) → `merge_patch`(non-None 섹션 교체 병합 후 GenerationResult 재검증). Dummy 는 requirement 만 바꾼 최소 패치 fixture. `_build_prompt` include_schema=False 분기 중립화(구조 지시는 EDIT_INSTRUCTION 소유).
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict/pytest, merge/patch 테스트 추가), web(변경 없음). **실 관측(z.ai glm-4.7-flashx): edit 1/1 성공** — 전송(timeout/429)→스키마(섹션 내부 필드 누락, 완전성 지시로 해소)→성공 단계적 확인. requirement 3/3.
+- 리뷰: 통과 1라운드(지적 0) — 상세: docs/reviews/2026-07-09-편집-부분패치.md
+- 가정/한계: 최상위 교체라 LLM 이 영향 섹션(ux↔code)을 함께 패치 안 하면 구식 가능 → 결정적 재유도(접근 B)는 후속. 실 성공은 flashx 단건 1회 — 다양한 지시·반복 안정성 추가 관측 필요.
+- 관련 결정: docs/decisions/0023 (편집 부분 패치), 0018 대체, 0022·0021 연계
+
 ## 2026-07-09 — 편집 프롬프트 축약(스키마 생략) (ADR-0021 blocker 대응)
 - 브랜치: feat/edit-prompt-shrink
 - 한 일: 편집 턴 프롬프트에서 formal JSON 스키마 생략(ADR-0022). LLM 포트 `generate(..., *, include_schema=True)` 옵션 추가(Dummy/GLM/`_build_prompt` 반영, 하위호환). `edit_agent.apply_edit` 는 `include_schema=False` — current_result 가 이미 구조 예시라 스키마 중복. 측정: 프롬프트 67% 축소(8539→2804자, ~2846→934 tok). requirement 등 최초 생성은 스키마 유지.

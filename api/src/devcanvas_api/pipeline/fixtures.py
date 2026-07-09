@@ -13,6 +13,7 @@ from devcanvas_api.pipeline.schemas import (
     DesignTokens,
     GenerationInput,
     GenerationResult,
+    GenerationResultPatch,
     HandoffDoc,
     RequirementSpec,
     ReviewFinding,
@@ -165,3 +166,10 @@ def generation_result() -> GenerationResult:
         review=review_report().findings,
         handoff=handoff(),
     )
+
+
+def generation_result_patch() -> GenerationResultPatch:
+    """더미 편집 패치 — requirement 만 바꾼 최소 패치(부분 병합 시연, ADR-0023)."""
+    edited = requirement()
+    edited.features = [*edited.features, "편집 요청 반영(더미)"]
+    return GenerationResultPatch(requirement=edited)
