@@ -135,9 +135,7 @@ class GLMAdapter:
             )
             resp.raise_for_status()
             content: str = resp.json()["choices"][0]["message"]["content"]
-        except GenerationError:
-            raise
-        except Exception as e:  # http/파싱 계열 오류
+        except Exception as e:  # http/응답 접근 계열 오류
             raise GenerationError(f"GLM 호출 실패: {e}") from e
 
         data = _extract_json(content)

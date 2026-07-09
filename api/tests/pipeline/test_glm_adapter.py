@@ -105,6 +105,16 @@ def test_glm_generate_strips_markdown_fences() -> None:
     assert result.title == "x"
 
 
+def test_glm_generate_handles_surrounding_prose() -> None:
+    # JSON 앞뒤로 평문이 섞인 경우 (회귀망 — _extract_json rfind 로직)
+    obj = json.dumps({"title": "고객", "items": ["a"]}, ensure_ascii=False)
+    content = f"설명입니다.\n{obj}\n끝."
+    adapter = _make_adapter({}, content)
+    result = adapter.generate(_Schema, "x", {})
+    assert result.title == "고객"
+    assert result.items == ["a"]
+
+
 def test_glm_adapter_without_key_raises() -> None:
     adapter = GLMAdapter(
         api_key=None, api_base="https://x", http_post=lambda *a, **k: _FakeResp({})
