@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from devcanvas_api.generations.dependencies import get_llm_adapter
 from devcanvas_api.main import create_app
+from devcanvas_api.pipeline.dependencies import get_llm_adapter
 from devcanvas_api.pipeline.llm import DummyLLMAdapter
 
 

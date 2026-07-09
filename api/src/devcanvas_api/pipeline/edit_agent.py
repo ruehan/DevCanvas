@@ -10,8 +10,8 @@ from devcanvas_api.pipeline.schemas import GenerationResult
 
 EDIT_INSTRUCTION = "사용자 지시에 따라 기존 생성 결과를 수정하라."
 
-# 편집 턴의 에이전트 단계(진행 노출용)
-EDIT_STEPS = ["요청 분석", "결과 수정"]
+# 편집 턴의 에이전트 단계(진행 노출용). 편집은 단일 LLM 호출이므로 1단계가 정직(리뷰 P3-2).
+EDIT_STEPS = ["결과 수정"]
 
 
 def apply_edit(

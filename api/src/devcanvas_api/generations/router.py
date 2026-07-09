@@ -4,9 +4,9 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends
 
-from devcanvas_api.generations.dependencies import get_llm_adapter
 from devcanvas_api.generations.schemas import GenerationRequest, GenerationResponse
 from devcanvas_api.generations.service import generate
+from devcanvas_api.pipeline.dependencies import get_llm_adapter
 from devcanvas_api.pipeline.llm import LLMAdapter
 
 router = APIRouter(prefix="/generations", tags=["generations"])

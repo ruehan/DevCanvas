@@ -4,8 +4,8 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from devcanvas_api.generations.dependencies import get_llm_adapter
 from devcanvas_api.main import create_app
+from devcanvas_api.pipeline.dependencies import get_llm_adapter
 from devcanvas_api.pipeline.llm import DummyLLMAdapter
 from devcanvas_api.sessions.dependencies import get_session_store
 from devcanvas_api.sessions.store import SessionStore
@@ -50,7 +50,7 @@ def test_second_message_runs_edit() -> None:
     resp = client.post(f"/sessions/{sid}/messages", json={"prompt": "버튼 더 둥글게"})
     assert resp.status_code == 200
     body = resp.json()
-    assert body["agent_message"]["steps"] == ["요청 분석", "결과 수정"]
+    assert body["agent_message"]["steps"] == ["결과 수정"]
 
 
 def test_missing_session_404() -> None:

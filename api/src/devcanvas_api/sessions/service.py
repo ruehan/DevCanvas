@@ -7,6 +7,7 @@ from devcanvas_api.pipeline.llm import LLMAdapter
 from devcanvas_api.pipeline.orchestrator import run_pipeline
 from devcanvas_api.pipeline.schemas import GenerationInput, GenerationResult
 from devcanvas_api.sessions.schemas import Message, MessageRole, Session
+from devcanvas_api.sessions.store import SessionStore
 
 # 첫 턴(전체 파이프라인)의 에이전트 단계
 PIPELINE_STEPS = [
@@ -21,9 +22,12 @@ PIPELINE_STEPS = [
 
 
 def post_message(
-    session: Session, prompt: str, llm: LLMAdapter
+    session: Session, prompt: str, llm: LLMAdapter, store: SessionStore
 ) -> tuple[Message, GenerationResult]:
-    """사용자 메시지를 추가하고 처리(첫 턴=전체 파이프라인, 이후=편집)한다."""
+    """사용자 메시지를 추가하고 처리(첫 턴=전체 파이프라인, 이후=편집)한다.
+
+    변이 후 store.save 로 명시적 영속화(Postgres 이관 시 실 기록).
+    """
     session.messages.append(Message(role=MessageRole.USER, content=prompt))
 
     if session.current_result is None:
@@ -38,4 +42,5 @@ def post_message(
     session.current_result = result
     agent_message = Message(role=MessageRole.AGENT, content=summary, steps=steps)
     session.messages.append(agent_message)
+    store.save(session)
     return agent_message, result

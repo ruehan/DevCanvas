@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from devcanvas_api.generations.dependencies import get_llm_adapter
+from devcanvas_api.pipeline.dependencies import get_llm_adapter
 from devcanvas_api.pipeline.llm import LLMAdapter
 from devcanvas_api.sessions.dependencies import get_session_store
 from devcanvas_api.sessions.schemas import (
@@ -49,7 +49,7 @@ def post_session_message(
     session = store.get(session_id)
     if session is None:
         raise HTTPException(status_code=404, detail="세션을 찾을 수 없습니다")
-    agent_message, result = post_message(session, request.prompt, llm)
+    agent_message, result = post_message(session, request.prompt, llm, store)
     return PostMessageResponse(
         agent_message=agent_message, result=result, session_id=session.id
     )
