@@ -1,3 +1,11 @@
+## 2026-07-09 — 편집 프롬프트 축약(스키마 생략) (ADR-0021 blocker 대응)
+- 브랜치: feat/edit-prompt-shrink
+- 한 일: 편집 턴 프롬프트에서 formal JSON 스키마 생략(ADR-0022). LLM 포트 `generate(..., *, include_schema=True)` 옵션 추가(Dummy/GLM/`_build_prompt` 반영, 하위호환). `edit_agent.apply_edit` 는 `include_schema=False` — current_result 가 이미 구조 예시라 스키마 중복. 측정: 프롬프트 67% 축소(8539→2804자, ~2846→934 tok). requirement 등 최초 생성은 스키마 유지.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict/pytest, 테스트 2종 추가·갱신), web(변경 없음).
+- 리뷰: 통과 1라운드(지적 0) — 상세: docs/reviews/2026-07-09-편집-프롬프트-축약.md
+- 가정/한계: 축소 후에도 실 edit 은 무료 티어 429 지속(격리 테스트=쿨다운+단건+재시도로도 429). 연타/크기 아님, 무료 티어 쿼터 벽. requirement 는 100% 유지. 실 edit 통과 = 유료 티어/쿼터 리셋 전제(후속). 성과는 프롬프트 67% 축소로 확정, 로직은 단위테스트 검증.
+- 관련 결정: docs/decisions/0022 (편집 프롬프트 스키마 생략), 0021·0018 연계
+
 ## 2026-07-09 — GLM 실호출 관측 + 전송 계층 재시도 정책 (ADR-0007 이월 해소)
 - 브랜치: feat/glm-observation
 - 한 일: 실 GLM(z.ai glm-4.7-flash 무료) 관측 하네스(`api/scripts/glm_observe.py`) 작성·실행 → requirement 9/9(100%, 스키마 위반 0), edit 0/3(전부 429/timeout). 결론: 재시도 = 전송 계층 일시오류(429/5xx/timeout/transport)만 지수 백오프, 스키마/JSON 위반은 비재시도(결정적 반복). GLMAdapter 에 `_fetch_content` 재시도 루프 + `_is_transient`, 타임아웃 60→120s, settings 3종(glm_timeout/glm_max_retries/glm_retry_base_delay) 추가. sleep 주입으로 무대기 단위테스트.

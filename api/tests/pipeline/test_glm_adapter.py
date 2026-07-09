@@ -75,6 +75,20 @@ def test_glm_generate_includes_schema_and_context_in_prompt() -> None:
     assert "title" in content  # 스키마 키
 
 
+def test_glm_generate_omits_schema_when_include_schema_false() -> None:
+    # 편집 턴(ADR-0022): formal JSON 스키마를 프롬프트에서 생략, context 는 유지
+    captured: dict[str, Any] = {}
+    adapter = _make_adapter(captured, json.dumps({"title": "x", "items": []}))
+    adapter.generate(
+        _Schema, "결과를 수정하라", {"current_result": {"title": "old"}}, include_schema=False
+    )
+    content = captured["kwargs"]["json"]["messages"][0]["content"]
+    assert "결과를 수정하라" in content  # instruction 유지
+    assert "current_result" in content  # context 유지
+    assert "동일한 JSON 구조" in content  # 스키마 대체 지시
+    assert "$defs" not in content and "properties" not in content  # formal 스키마 미포함
+
+
 def test_glm_generate_raises_on_invalid_json() -> None:
     adapter = _make_adapter({}, "이건 JSON이 아님")
     with pytest.raises(GenerationError):  # JSON 파싱/검증 실패

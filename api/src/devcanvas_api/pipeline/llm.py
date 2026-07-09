@@ -49,8 +49,19 @@ def _is_transient(exc: BaseException) -> bool:
 class LLMAdapter(Protocol):
     """구조화 출력을 내는 LLM 어댑터 포트(ADR-0007)."""
 
-    def generate(self, schema: type[T], instruction: str, context: dict[str, object]) -> T:
-        """instruction/context 로 schema 인스턴스를 생성해 반환한다."""
+    def generate(
+        self,
+        schema: type[T],
+        instruction: str,
+        context: dict[str, object],
+        *,
+        include_schema: bool = True,
+    ) -> T:
+        """instruction/context 로 schema 인스턴스를 생성해 반환한다.
+
+        include_schema=False 면 프롬프트에 formal JSON 스키마를 넣지 않는다(ADR-0022):
+        context 가 이미 대상 스키마의 완전한 인스턴스를 담은 편집 턴에서 중복 제거·토큰 절감.
+        """
         ...
 
 
@@ -68,8 +79,15 @@ class DummyLLMAdapter:
         GenerationResult: fixtures.generation_result(),
     }
 
-    def generate(self, schema: type[T], instruction: str, context: dict[str, object]) -> T:
-        del instruction, context
+    def generate(
+        self,
+        schema: type[T],
+        instruction: str,
+        context: dict[str, object],
+        *,
+        include_schema: bool = True,
+    ) -> T:
+        del instruction, context, include_schema
         fixture = self._FIXTURES.get(schema)
         if fixture is None:
             raise NotImplementedError(f"DummyLLMAdapter: {schema.__name__} fixture 없음")
@@ -81,10 +99,28 @@ class GenerationError(RuntimeError):
     """GLM 응답 생성/검증 실패(ADR-0007)."""
 
 
-def _build_prompt(schema: type[BaseModel], instruction: str, context: dict[str, object]) -> str:
-    """스키마 + 지시 + 컨텍스트를 묶은 프롬프트. JSON 객체만 반환하도록 요구."""
-    schema_desc = json.dumps(schema.model_json_schema(), ensure_ascii=False)
+def _build_prompt(
+    schema: type[BaseModel],
+    instruction: str,
+    context: dict[str, object],
+    *,
+    include_schema: bool = True,
+) -> str:
+    """스키마 + 지시 + 컨텍스트를 묶은 프롬프트. JSON 객체만 반환하도록 요구.
+
+    include_schema=False 면 formal JSON 스키마 블록을 생략한다(ADR-0022). context 가 이미
+    대상 스키마의 완전한 인스턴스를 담은 편집 턴에서 스키마가 중복이므로, 그 인스턴스와
+    "동일한 구조"를 유지하라고 지시하는 것으로 대체 — 토큰(관측상 payload 의 ~68%) 절감.
+    """
     context_desc = json.dumps(context, ensure_ascii=False, default=str)
+    if not include_schema:
+        return (
+            f"{instruction}\n\n"
+            f"반드시 JSON 객체만 반환한다. 컨텍스트의 기존 결과와 완전히 동일한 JSON 구조"
+            f"(같은 키·중첩)를 유지한 채 지시에 해당하는 부분만 수정하라.\n"
+            f"컨텍스트:\n{context_desc}"
+        )
+    schema_desc = json.dumps(schema.model_json_schema(), ensure_ascii=False)
     return (
         f"{instruction}\n\n"
         f"다음 JSON 스키마에 맞춰 한국어 값으로 응답하라. 반드시 JSON 객체만 반환한다.\n"
@@ -174,12 +210,19 @@ class GLMAdapter:
         # 도달 불가(루프는 반환 또는 raise 로 종료) — 타입 완결성용
         raise GenerationError(f"GLM 호출 실패: {last_exc}")
 
-    def generate(self, schema: type[T], instruction: str, context: dict[str, object]) -> T:
+    def generate(
+        self,
+        schema: type[T],
+        instruction: str,
+        context: dict[str, object],
+        *,
+        include_schema: bool = True,
+    ) -> T:
         if not self._api_key:
             raise GenerationError(
                 "GLM API 키 미설정 — DEVCANVAS_GLM_API_KEY 확인"
             )
-        prompt = _build_prompt(schema, instruction, context)
+        prompt = _build_prompt(schema, instruction, context, include_schema=include_schema)
         content = self._fetch_content(prompt)
 
         data = _extract_json(content)

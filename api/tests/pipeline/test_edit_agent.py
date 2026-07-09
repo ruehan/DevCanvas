@@ -27,10 +27,13 @@ class _ProbeLLM:
         schema: type[GenerationResult],
         instruction: str,
         context: dict[str, object],
+        *,
+        include_schema: bool = True,
     ) -> GenerationResult:
         captured["schema"] = schema
         captured["instruction"] = instruction
         captured["context"] = context
+        captured["include_schema"] = include_schema
         return _result()
 
 
@@ -47,3 +50,5 @@ def test_apply_edit_passes_current_result_and_instruction_to_llm() -> None:
     assert isinstance(ctx, dict)
     assert "current_result" in ctx and "instruction" in ctx
     assert ctx["instruction"] == "고객 테이블에 계약일 추가"
+    # 편집은 formal 스키마 생략(ADR-0022) — current_result 가 구조 예시
+    assert captured["include_schema"] is False
