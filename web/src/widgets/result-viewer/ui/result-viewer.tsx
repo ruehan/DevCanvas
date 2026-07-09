@@ -8,7 +8,7 @@ import { buildTabs } from "@/widgets/result-viewer/model";
 // Sandpack 은 브라우저 API 사용 → SSR 비활성 동적 로드 (ADR-0015). 슬라이스 public API 경유.
 const SandpackPreviewView = dynamic(
   () => import("@/features/preview").then((m) => m.SandpackPreviewView),
-  { ssr: false, loading: () => <p className="text-sm text-gray-500">프리뷰 로드 중...</p> },
+  { ssr: false, loading: () => <p className="text-sm text-text-muted">프리뷰 로드 중...</p> },
 );
 
 interface ResultViewerProps {
@@ -31,12 +31,12 @@ export function ResultViewer({ result }: ResultViewerProps) {
             onClick={() => setActive(tab.label)}
             className={
               "px-3 py-2 text-sm " +
-              (active === tab.label ? "border-b-2 border-blue-600 font-medium" : "text-gray-600")
+              (active === tab.label ? "border-b-2 border-accent font-medium" : "text-text-muted")
             }
           >
             {tab.label}
             {tab.badge !== undefined ? (
-              <span className="ml-1 rounded bg-gray-200 px-1 text-xs">{tab.badge}</span>
+              <span className="ml-1 rounded bg-border-strong px-1 text-xs">{tab.badge}</span>
             ) : null}
           </button>
         ))}
@@ -64,7 +64,7 @@ function PreviewPanel({ result }: { result: GenerationResult }) {
   const [selectedScreen, setSelectedScreen] = useState(layouts[0]?.screen ?? "");
   const layout = layouts.find((l) => l.screen === selectedScreen) ?? layouts[0];
   if (!layout) {
-    return <p className="text-sm text-gray-500">프리뷰할 화면이 없습니다.</p>;
+    return <p className="text-sm text-text-muted">프리뷰할 화면이 없습니다.</p>;
   }
   const state = result.ux_plan.states[layout.screen];
   return (
@@ -83,7 +83,7 @@ function PreviewPanel({ result }: { result: GenerationResult }) {
             </option>
           ))}
         </select>
-        <span className="text-xs text-gray-500">
+        <span className="text-xs text-text-muted">
           상태(default/loading/empty/error) 토글은 프리뷰 안에서
         </span>
       </div>
@@ -99,10 +99,10 @@ function ScreensPanel({ result }: { result: GenerationResult }) {
         <li key={s.name} className="rounded border p-3">
           <div className="flex items-center gap-2">
             <span className="font-medium">{s.name}</span>
-            <span className="rounded bg-gray-100 px-1 text-xs">{s.kind}</span>
+            <span className="rounded bg-surface-alt px-1 text-xs">{s.kind}</span>
           </div>
-          <p className="text-sm text-gray-600">{s.purpose}</p>
-          <p className="mt-1 text-xs text-gray-500">
+          <p className="text-sm text-text-muted">{s.purpose}</p>
+          <p className="mt-1 text-xs text-text-muted">
             컴포넌트: {s.components.join(", ")}
           </p>
         </li>
@@ -136,7 +136,7 @@ function StatesPanel({ result }: { result: GenerationResult }) {
 function StateRow({ label, value }: { label: string; value: string }) {
   return (
     <tr className="border-t">
-      <th className="w-32 p-1 text-left text-xs text-gray-500">{label}</th>
+      <th className="w-32 p-1 text-left text-xs text-text-muted">{label}</th>
       <td className="p-1">{value}</td>
     </tr>
   );
@@ -164,7 +164,7 @@ function TokenTable({ title, entries }: { title: string; entries: Record<string,
         <tbody>
           {rows.map(([k, v]) => (
             <tr key={k} className="border-t">
-              <td className="p-1 text-xs text-gray-500">{k}</td>
+              <td className="p-1 text-xs text-text-muted">{k}</td>
               <td className="p-1 font-mono text-xs">{v}</td>
             </tr>
           ))}
@@ -193,7 +193,7 @@ function CodePanel({
               onClick={() => onSelect(f.path)}
               className={
                 "w-full truncate rounded px-2 py-1 text-left " +
-                (selected === f.path ? "bg-blue-50 font-medium" : "hover:bg-gray-50")
+                (selected === f.path ? "bg-accent-soft font-medium" : "hover:bg-surface-alt")
               }
             >
               {f.path}
@@ -201,7 +201,7 @@ function CodePanel({
           </li>
         ))}
       </ul>
-      <pre className="flex-1 overflow-auto rounded bg-gray-50 p-3 text-xs">
+      <pre className="flex-1 overflow-auto rounded bg-surface-alt p-3 text-xs">
         <code>{file?.content}</code>
       </pre>
     </div>
@@ -216,12 +216,12 @@ function ReviewPanel({ result }: { result: GenerationResult }) {
           <span
             className={
               "mr-2 rounded px-1 text-xs " +
-              (f.severity === "P1" ? "bg-red-100 text-red-700" : "bg-yellow-100 text-yellow-700")
+              (f.severity === "P1" ? "bg-danger-soft text-danger" : "bg-accent-soft text-accent")
             }
           >
             {f.severity}
           </span>
-          <span className="text-gray-500">{f.category}</span>
+          <span className="text-text-muted">{f.category}</span>
           <p className="mt-1">{f.message}</p>
         </li>
       ))}
@@ -234,11 +234,11 @@ function ExportPanel({ result }: { result: GenerationResult }) {
     <div className="space-y-3 text-sm">
       <div>
         <h4 className="font-medium">파일 트리</h4>
-        <pre className="rounded bg-gray-50 p-2 text-xs">{result.handoff.file_tree.join("\n")}</pre>
+        <pre className="rounded bg-surface-alt p-2 text-xs">{result.handoff.file_tree.join("\n")}</pre>
       </div>
       <div>
         <h4 className="font-medium">설치 명령</h4>
-        <pre className="rounded bg-gray-50 p-2 text-xs">
+        <pre className="rounded bg-surface-alt p-2 text-xs">
           {result.handoff.install_commands.join("\n") || "(없음)"}
         </pre>
       </div>
@@ -252,7 +252,7 @@ function ExportPanel({ result }: { result: GenerationResult }) {
       </div>
       <div>
         <h4 className="font-medium">구현 가이드</h4>
-        <pre className="rounded bg-gray-50 p-2 text-xs whitespace-pre-wrap">
+        <pre className="rounded bg-surface-alt p-2 text-xs whitespace-pre-wrap">
           {result.handoff.guide_md}
         </pre>
       </div>

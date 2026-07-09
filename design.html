@@ -1,0 +1,1315 @@
+<html lang="en-US" class="light" crxlauncher="">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/png" sizes="512x512" href="https://z-cdn.chatglm.cn/z-ai/static/logo.svg" />
+		<link rel="shortcut icon" href="https://z-cdn.chatglm.cn/z-ai/static/logo.svg" />
+		<link rel="apple-touch-icon" sizes="512x512" href="https://z-cdn.chatglm.cn/z-ai/static/logo.svg" />
+		<meta name="apple-mobile-web-app-title" content="Z.ai - Advanced AI Chatbot &amp; Agent powered by GLM-5.2" />
+
+		<meta
+			name="keywords"
+			content="GLM-4.6, GLM 4.6, GLM-4.6-Air, GLM 4.6 Air, GLM 4.5, GLM4.5, GLM4.6, Deep Research, z ai, z.ai, GLM 4.5 AI, GLM 4.6 AI, GLM AI, Chat Z, zai, Chat AI, GLM, z.ia, Chat Z AI, AI chat, chatbot, z.ai chat, free ai chat, free AI, free ai chat no login, GLM-4.5, GLM-4.5 chat, GLM-4.1V, GLM-4.5V, AI assistant chat, AI PPT, AI presentation, AI presentation maker, AI slides maker, AI slides, slide deck, pitch deck, AI deck generator, free pitch deck generator, AI PPT, AI PPT maker, AI for Google Slides, AI for PowerPoint, AI writer, AI writing assistant, AI code generator, full stack code generation, AI full stack developer, claude code, Roo Code, Cline, Kilo Code, OpenCode, Codex, Cursor, GLM Coding Plan, GLM Coding, AI Coding, code writer ai, magic design, magic design tool, AI inspiration board, visual brainstorming AI, chat with AI, AI对话, AI聊天, 聊天机器人, 免费AI聊天, AI做PPT, AI写作, AI编程, 全栈开发, 灵感画板, AI tool, AI helper, AI for students, AI for marketers, AI for content creation, ChatGPT, chatgpt free, Free ChatGPT, gpt chat, Gemini, Grok, Claude, Poe AI, YouChat, Jasper AI, deepseek, qwen, 豆包, 文心一言, AI搜问答, 写作灵感AI, 代码解释工具, PPT思路生成, 如何用AI做PPT, create pitch deck from brief, AI business plan presentation, marketing report slides, AI academic paper assistant, AI legal contract drafting, write social media calendar, AI email responder,  VS Code AI assistant, AI for Notion, AI for Figma, AI math problem solver from image, AI geoguessr solver, image to code generator, table extractor from image, chart data extractor, document analysis AI, image caption generator, visual Q&amp;A, 看图猜成语, AI拍照解题, 数学题解答, 物理题解答, GeoGuess AI, 图片转表格, 图片读数据, 看图问答, analyze video, summarize video content, generate video transcript, find object in image, what is in this picture, 视频分析, 视频内容摘要, 生成视频字幕, 图片里有什么, 识别图中物体, GLM-4.7, GLM 4.7, GLM4.7, skills, coding plan, GLM-5, GLM-5.0, GLM5, GLM 5, Pony, Pony Alpha, GLM-5.2, GLM 5.2, GLM5.2, long-horizon, long-running"
+		/>
+
+		<link rel="manifest" href="https://z-cdn.chatglm.cn/z-ai/frontend/static/manifest.json" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover" />
+
+		<meta name="referrer" content="no-referrer" />
+		<link
+			rel="search"
+			type="application/opensearchdescription+xml"
+			title="Z.ai - Advanced AI Chatbot &amp; Agent powered by GLM-5.2"
+			href="https://z-cdn.chatglm.cn/z-ai/frontend/static/opensearch.xml"
+		/>
+		<script async="" src="https://www.googletagmanager.com/gtag/js?id=G-Z8QTHYBHP3"></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag("js", new Date());
+
+			gtag("config", "G-Z8QTHYBHP3");
+		</script>
+
+		<script>
+			let metrics = {};
+			const observer = new PerformanceObserver((list) => {
+				const entries = list.getEntries();
+
+				entries.forEach((entry) => {
+					// 根据不同的entry类型处理不同的性能指标
+					switch (entry.entryType) {
+						case "navigation":
+							{
+								const navEntry = entry;
+								metrics = {
+									...metrics,
+									dns: navEntry.domainLookupEnd - navEntry.domainLookupStart,
+									response: navEntry.responseEnd - navEntry.responseStart,
+									dom_parse: navEntry.domInteractive - navEntry.responseEnd,
+									dom_ready: navEntry.domContentLoadedEventEnd - navEntry.fetchStart,
+									resource: navEntry.domComplete - navEntry.domContentLoadedEventEnd,
+									first_interactive: navEntry.domInteractive - navEntry.fetchStart,
+									first_byte: navEntry.responseStart - navEntry.domainLookupStart,
+									loaded: navEntry.loadEventEnd - navEntry.fetchStart,
+								};
+								sessionStorage.setItem("performance", JSON.stringify(metrics));
+								// 发送性能指标到阿里云日志服务
+							}
+							break;
+
+						case "paint":
+							if (entry.name === "first-paint") {
+								metrics = {
+									...metrics,
+									first_paint: entry.startTime,
+								};
+								sessionStorage.setItem("performance", JSON.stringify(metrics));
+							}
+							if (entry.name === "first-contentful-paint") {
+								metrics = {
+									...metrics,
+									first_contentful_paint: entry.startTime,
+								};
+								sessionStorage.setItem("performance", JSON.stringify(metrics));
+							}
+							break;
+					}
+				});
+			});
+
+			// 观察的性能指标类型
+			observer.observe({
+				entryTypes: ["navigation", "paint"],
+			});
+		</script>
+
+		<script>
+			function resizeIframe(obj) {
+				obj.style.height = obj.contentWindow.document.documentElement.scrollHeight + "px";
+			}
+		</script>
+
+		<script>
+			// On page load or when changing themes, best to add inline in `head` to avoid FOUC
+			const initTheme = () => {
+				const metaThemeColorTag = document.querySelector('meta[name="theme-color"]');
+				// 取用户浏览器设置的主题
+				// const prefersTheme = window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+
+				const prefersTheme = "light";
+
+				if (!localStorage?.theme) {
+					localStorage.theme = prefersTheme;
+				}
+
+				if (localStorage.theme === "system") {
+					document.documentElement.classList.add(prefersTheme);
+					metaThemeColorTag.setAttribute("content", prefersTheme === "light" ? "#F4F6F8" : "#141618");
+				} else if (localStorage.theme === "light") {
+					document.documentElement.classList.add("light");
+					metaThemeColorTag.setAttribute("content", "#F4F6F8");
+				} else {
+					document.documentElement.classList.add("dark");
+					metaThemeColorTag.setAttribute("content", "#141618");
+				}
+
+				// window.matchMedia('(prefers-color-scheme: dark)').addListener((e) => {
+				// 	if (localStorage.theme === 'system') {
+				// 		if (e.matches) {
+				// 			document.documentElement.classList.add('dark');
+				// 			document.documentElement.classList.remove('light');
+				// 			metaThemeColorTag.setAttribute('content', '#141618');
+				// 		} else {
+				// 			document.documentElement.classList.add('light');
+				// 			document.documentElement.classList.remove('dark');
+				// 			metaThemeColorTag.setAttribute('content', '#F4F6F8');
+				// 		}
+				// 	}
+				// });
+			};
+			initTheme();
+		</script>
+
+		<script>
+			// 炫酷的控制台介绍 - 根据语言显示
+			(function () {
+				// 检测用户语言偏好
+				const userLang = navigator.language || navigator.userLanguage;
+				const isChinese = userLang.startsWith("zh") || userLang.includes("CN") || userLang.includes("TW") || userLang.includes("HK");
+
+				// 共同的 ASCII Logo
+				const logoLines = [
+					"%c███████╗     █████╗ ██╗",
+					"%c╚══███╔╝    ██╔══██╗██║",
+					"%c  ███╔╝     ███████║██║",
+					"%c ███╔╝      ██╔══██║██║",
+					"%c███████╗ ██╗██║  ██║██║",
+					"%c╚══════╝ ╚═╝╚═╝  ╚═╝╚═╝",
+				];
+				const logoColors = [
+					"color: #ff6b6b; font-family: monospace; font-size: 12px;",
+					"color: #4ecdc4; font-family: monospace; font-size: 12px;",
+					"color: #45b7d1; font-family: monospace; font-size: 12px;",
+					"color: #f9ca24; font-family: monospace; font-size: 12px;",
+					"color: #ff9ff3; font-family: monospace; font-size: 12px;",
+					"color: #6c5ce7; font-family: monospace; font-size: 12px;",
+				];
+
+				if (isChinese) {
+					// 中文版本
+					console.log("%c🚀 欢迎来到 Z.ai 🚀", "color: #00d4ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #00d4ff;");
+					logoLines.forEach((line, index) => console.log(line, logoColors[index]));
+					console.log("");
+					console.log("%c✨ 基于开源GLM模型的智能AI助手", "color: #a29bfe; font-size: 14px; font-weight: bold;");
+					console.log("%c🧠 支持文本生成、推理和深度研究", "color: #fd79a8; font-size: 12px;");
+					console.log("%c🌍 为中英文用户量身定制", "color: #00b894; font-size: 12px;");
+					console.log("%c💡 免费开源的ChatGPT替代方案", "color: #fdcb6e; font-size: 12px;");
+					console.log("");
+					console.log("%c---", "color: #ddd;");
+					console.log("%c由 ❤️ 和大量 ☕ 驱动", "color: #e84393; font-size: 11px; font-style: italic;");
+					console.log("");
+					console.log("%c🚀 加入我们！我们正在招聘优秀人才！", "color: #00b894; font-size: 13px; font-weight: bold;");
+					console.log("%c💼 查看职位: https://zhipu-ai.jobs.feishu.cn/s/stmyTm5lxaU", "color: #0984e3; font-size: 12px; text-decoration: underline;");
+				} else {
+					// 英文版本
+					console.log("%c🚀 Welcome to Z.ai 🚀", "color: #00d4ff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #00d4ff;");
+					logoLines.forEach((line, index) => console.log(line, logoColors[index]));
+					console.log("");
+					console.log("%c✨ Advanced AI assistant powered by open-source GLM models", "color: #a29bfe; font-size: 14px; font-weight: bold;");
+					console.log("%c🧠 Supports text generation, reasoning, and deep research", "color: #fd79a8; font-size: 12px;");
+					console.log("%c🌍 Tailored for both English and Chinese users", "color: #00b894; font-size: 12px;");
+					console.log("%c💡 Free and open-source ChatGPT alternative", "color: #fdcb6e; font-size: 12px;");
+					console.log("");
+					console.log("%c---", "color: #ddd;");
+					console.log("%cPowered by ❤️ and lots of ☕", "color: #e84393; font-size: 11px; font-style: italic;");
+					console.log("");
+					console.log("%c🚀 Join us! We are hiring talented people!", "color: #00b894; font-size: 13px; font-weight: bold;");
+					console.log("%c💼 View jobs: https://zhipu-ai.jobs.feishu.cn/s/stmyTm5lxaU", "color: #0984e3; font-size: 12px; text-decoration: underline;");
+				}
+			})();
+		</script>
+
+		<script type="module" crossorigin="" src="https://z-cdn.chatglm.cn/z-ai/frontend/prod-fe-1.1.71/assets/index-C-LajDpZ.js"></script>
+		<link rel="stylesheet" crossorigin="" href="https://z-cdn.chatglm.cn/z-ai/frontend/prod-fe-1.1.71/assets/index-DU3xG9R2.css" />
+		<title>Z.ai - Advanced AI Chatbot &amp; Agent powered by GLM-5.2</title>
+		<meta name="description" content="Amazing content sharing from Z.AI" />
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Z.AI" />
+		<meta property="og:title" content="Z.AI Share" />
+		<meta property="og:description" content="Amazing content sharing from Z.AI" />
+		<meta property="og:image" content="https://z-cdn.chatglm.cn/z-ai/static/share-logo.png" />
+		<meta property="og:image:alt" content="Z.AI Share" />
+		<meta property="og:image:width" content="400" />
+		<meta property="og:image:height" content="400" />
+		<meta property="og:image:type" content="image/png" />
+		<meta property="og:url" content="http://chat.z.ai/space/r1ns15387yq0-art" />
+		<meta property="article:author" content="Z.AI" />
+		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:title" content="Z.AI Share" />
+		<meta name="twitter:description" content="Amazing content sharing from Z.AI" />
+		<meta name="twitter:image" content="https://z-cdn.chatglm.cn/z-ai/static/share-logo.png" />
+		<meta name="twitter:image:alt" content="Z.AI Share" />
+		<meta name="robots" content="index,follow" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="application-name" content="Z.AI" />
+		<meta name="theme-color" content="#1976d2" />
+		<meta name="msapplication-TileColor" content="#1976d2" />
+		<link rel="canonical" href="http://chat.z.ai/space/r1ns15387yq0-art" />
+		<script src="https://res.wx.qq.com/open/js/jweixin-1.6.0.js"></script>
+		<script>
+			(function () {
+				var frontendCallId = Math.random().toString(36).substring(2, 8);
+				console.log("[WeChat-Frontend-" + frontendCallId + "] ===== 开始前端微信JS-SDK初始化 =====");
+				console.log("[WeChat-Frontend-" + frontendCallId + "] 当前页面URL:", window.location.href);
+				console.log("[WeChat-Frontend-" + frontendCallId + "] 当前页面URL (去掉#):", window.location.href.split("#")[0]);
+				console.log("[WeChat-Frontend-" + frontendCallId + "] 签名配置:", {
+					debug: false,
+					appId: "wxa5796e47c57570b1",
+					timestamp: 1783580109,
+					nonceStr: "9e4Ypy00grnZtdCy",
+					signature: "a6020fb65c3268a0053022736c76daaff8dfc3c7",
+					jsApiList: ["updateAppMessageShareData", "updateTimelineShareData", "onMenuShareAppMessage", "onMenuShareTimeline"],
+				});
+
+				// 微信 JS-SDK 配置
+				wx.config({
+					debug: false, // 根据环境变量设置debug模式
+					appId: "wxa5796e47c57570b1", // 公众号的唯一标识
+					timestamp: 1783580109, // 生成签名的时间戳
+					nonceStr: "9e4Ypy00grnZtdCy", // 生成签名的随机串
+					signature: "a6020fb65c3268a0053022736c76daaff8dfc3c7", // 签名
+					jsApiList: ["updateAppMessageShareData", "updateTimelineShareData", "onMenuShareAppMessage", "onMenuShareTimeline"], // 需要使用的JS接口列表
+				});
+
+				console.log("[WeChat-Frontend-" + frontendCallId + "] wx.config() 调用完成");
+
+				// 微信 JS-SDK 就绪回调
+				wx.ready(function () {
+					console.log("[WeChat-Frontend-" + frontendCallId + "] WeChat JS-SDK ready - 微信JS-SDK就绪!");
+
+					// 分享给朋友的配置
+					console.log("[WeChat-Frontend-" + frontendCallId + "] 开始配置分享给朋友...");
+					wx.updateAppMessageShareData({
+						title: "Z.AI Share",
+						desc: "Amazing content sharing from Z.AI",
+						link: "http://chat.z.ai/space/r1ns15387yq0-art",
+						imgUrl: "https://z-cdn.chatglm.cn/z-ai/static/share-logo.png",
+						success: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 分享给朋友成功");
+						},
+						cancel: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 分享给朋友取消");
+						},
+					});
+
+					// 分享到朋友圈的配置
+					console.log("[WeChat-Frontend-" + frontendCallId + "] 开始配置分享到朋友圈...");
+					wx.updateTimelineShareData({
+						title: "Z.AI Share",
+						link: "http://chat.z.ai/space/r1ns15387yq0-art",
+						imgUrl: "https://z-cdn.chatglm.cn/z-ai/static/share-logo.png",
+						success: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 分享到朋友圈成功");
+						},
+						cancel: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 分享到朋友圈取消");
+						},
+					});
+
+					// 兼容旧版本微信客户端
+					console.log("[WeChat-Frontend-" + frontendCallId + "] 开始配置兼容旧版本分享...");
+					wx.onMenuShareAppMessage({
+						title: "Z.AI Share",
+						desc: "Amazing content sharing from Z.AI",
+						link: "http://chat.z.ai/space/r1ns15387yq0-art",
+						imgUrl: "https://z-cdn.chatglm.cn/z-ai/static/share-logo.png",
+						success: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 兼容版分享给朋友成功");
+						},
+						cancel: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 兼容版分享给朋友取消");
+						},
+					});
+
+					wx.onMenuShareTimeline({
+						title: "Z.AI Share",
+						link: "http://chat.z.ai/space/r1ns15387yq0-art",
+						imgUrl: "https://z-cdn.chatglm.cn/z-ai/static/share-logo.png",
+						success: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 兼容版分享到朋友圈成功");
+						},
+						cancel: function () {
+							console.log("[WeChat-Frontend-" + frontendCallId + "] 兼容版分享到朋友圈取消");
+						},
+					});
+
+					console.log("[WeChat-Frontend-" + frontendCallId + "] 所有分享配置完成");
+				});
+
+				// 微信 JS-SDK 错误回调
+				wx.error(function (res) {
+					console.error("[WeChat-Frontend-" + frontendCallId + "] 微信JS-SDK错误:", res);
+					console.error("[WeChat-Frontend-" + frontendCallId + "] 错误详情:", JSON.stringify(res, null, 2));
+					// 可以在这里处理签名验证失败等错误
+				});
+
+				console.log("[WeChat-Frontend-" + frontendCallId + "] ===== 微信JS-SDK初始化完成 =====");
+			})();
+		</script>
+		<link rel="modulepreload" as="script" crossorigin="" href="https://z-cdn.chatglm.cn/z-ai/frontend/prod-fe-1.1.71/assets/_page-BuDNsfGz.js" />
+		<link rel="stylesheet" crossorigin="" href="https://z-cdn.chatglm.cn/z-ai/frontend/prod-fe-1.1.71/assets/_page-3CViShiz.css" />
+		<style></style>
+	</head>
+
+	<body>
+		<script src="https://sdk.rum.aliyuncs.com/v2/browser-sdk.js" crossorigin=""></script>
+		<script>
+			const env = location.hostname === "chat.z.ai" ? "prod" : "pre";
+			!(function (c, b, d, a) {
+				c[a] || (c[a] = {});
+				c[a] = {
+					pid: "j2c03hoppk@9a8be198b65ba4b",
+					endpoint: "https://j2c03hoppk-default-cn.rum.aliyuncs.com",
+					// 设置环境信息，参考值：'prod' | 'gray' | 'pre' | 'daily' | 'local'
+					env: env,
+					// 设置路由模式， 参考值：'history' | 'hash'
+					spaMode: "history",
+					collectors: {
+						// 页面性能指标监听开关，默认开启
+						perf: true,
+						// WebVitals指标监听开关，默认开启
+						webVitals: false,
+						// Ajax监听开关，默认开启
+						api: true,
+						// 静态资源开关，默认开启
+						staticResource: true,
+						// JS错误监听开关，默认开启
+						jsError: true,
+						// 控制台错误监听开关，默认开启
+						consoleError: false,
+						// 用户行为监听开关，默认开启
+						action: true,
+					},
+					// 链路追踪配置开关，默认关闭
+					tracing: false,
+					parseViewName(url) {
+						const pathname = new URL(url).pathname;
+						if (!pathname) {
+							return "/";
+						}
+						return pathname.replace(/(.*)\/[a-f0-9-]+$/g, "$1");
+					},
+					evaluateApi(options, response) {
+						const traceId = response?.headers?.get?.("X-Trace-Id") || "unknown";
+
+						return {
+							name: options.url.replace(/\/[a-f0-9-]{36}/g, "/**"),
+							properties: {
+								traceId,
+							},
+						};
+					},
+				};
+				with (b) with (body) with (insertBefore(createElement("script"), firstChild)) setAttribute("crossorigin", "", (src = d));
+			})(window, document, "https://sdk.rum.aliyuncs.com/v2/browser-sdk.js", "__rum");
+		</script>
+		<div id="app" style="display: contents">
+			<!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><!----><iframe
+				class="w-screen h-screen"
+				frameborder="0"
+				sandbox="allow-scripts allow-forms allow-popups allow-popups-to-escape-sandbox"
+				title="html"
+				srcdoc='
+  &lt;!DOCTYPE html&gt;
+  &lt;html lang="en"&gt;
+    &lt;head&gt;
+      &lt;meta charset="UTF-8"&gt;
+      &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+      &lt;style&gt;
+        body {
+          background-color: white; /* Ensure the iframe has a white background */
+        }
+      &lt;/style&gt;
+      &lt;script&gt;
+        var Z_CDN_WHITELIST = [
+          &apos;cdn.jsdelivr.net&apos;,
+          &apos;cdnjs.cloudflare.com&apos;,
+          &apos;cdn.tailwindcss.com&apos;,
+          &apos;unpkg.com&apos;,
+          &apos;fonts.googleapis.com&apos;,
+          &apos;d3js.org&apos;,
+          &apos;cdn.babylonjs.com&apos;,
+          &apos;html2canvas.hertzen.com&apos;,
+          &apos;code.jquery.com&apos;,
+          &apos;cdn.datatables.net&apos;,
+          &apos;kit.fontawesome.com&apos;,
+          &apos;code.createjs.com&apos;,
+          &apos;cdn.plot.ly&apos;,
+          &apos;fonts.gstatic.com&apos;,
+          &apos;www.rgraph.net&apos;,
+          &apos;api.mapbox.com&apos;,
+          &apos;polyfill.io&apos;,
+          &apos;cdn.quilljs.com&apos;,
+          &apos;picsum.photos&apos;,
+          &apos;esm.sh&apos;
+        ];
+
+        function z_isUrlInWhitelist(url) {
+          if (!url || typeof url !== &apos;string&apos;) {
+            return false;
+          }
+          try {
+            const urlObj = new URL(url);
+            const hostname = urlObj.hostname;
+            return Z_CDN_WHITELIST.some(domain =&gt; hostname === domain);
+          } catch (e) {
+            return false;
+          }
+        }
+
+          function z_proxyCdnUrl(url) {
+          if (!url || !url.startsWith(&apos;http&apos;)) {
+            return url;
+          }
+            if (!z_isUrlInWhitelist(url)) {
+            return url;
+          }
+          if (!url.startsWith(&apos;https://artifacts-cdn.chatglm.site/&apos;)) {
+            return &apos;https://artifacts-cdn.chatglm.site/&apos; + url;
+          }
+          return url;
+        }
+        
+        // 增强版外部链接拦截 - 适合放在模板字符串中
+        document.addEventListener(&apos;click&apos;, function (ev) {
+          try {
+            const anchor = ev.target?.closest?.(&apos;a[href]&apos;) || null;
+            if (!anchor) return;
+
+            let href = anchor.getAttribute(&apos;href&apos;)?.trim() || &apos;&apos;;
+            if (!href) return;
+
+            if (href.startsWith(&apos;javascript:&apos;)) return;
+
+            // 新需求：href="#" 的链接完全阻止跳转和任何行为
+            if (href === &apos;#&apos;) {
+              ev.preventDefault();
+              return;
+            }
+
+            // 处理其他内部锚点（如 #about、#contact 等）
+            if (href.startsWith(&apos;#&apos;)) {
+              const rawId = href.slice(1);
+              if (!rawId) return;
+
+              const id = decodeURIComponent(rawId);
+              const target = 
+                document.getElementById(id) ||
+                document.querySelector(&apos;a[name="&apos; + id.replace(/"/g, &apos;\"&apos;) + &apos;"]&apos;) ||
+                document.querySelector(&apos;[name="&apos; + id.replace(/"/g, &apos;\"&apos;) + &apos;"]&apos;);
+
+              if (target &amp;&amp; target.scrollIntoView) {
+                ev.preventDefault();
+                try {
+                  history.pushState(null, &apos;&apos;, href);
+                } catch (e) {}
+                target.scrollIntoView({ behavior: &apos;smooth&apos;, block: &apos;start&apos; });
+              }
+              return;
+            }
+
+            // 处理外部链接
+            let url;
+            try {
+              url = new URL(href, window.location.href);
+            } catch (e) {
+              return;
+            }
+
+            if (url.protocol !== &apos;http:&apos; &amp;&amp; url.protocol !== &apos;https:&apos;) return;
+
+            const isExternal = url.hostname !== window.location.hostname;
+
+            if (isExternal || anchor.getAttribute(&apos;target&apos;) === &apos;_blank&apos;) {
+              ev.preventDefault();
+              window.open(url.toString(), &apos;_blank&apos;, &apos;noopener,noreferrer&apos;);
+            }
+
+          } catch (e) {
+            // 出错时不阻止默认行为
+          }
+        }, true);
+
+        // 1. 暴力清除函数：从 DOM 层面抹除 onclick 属性
+        var Z_removeInlineOnclick = function () {
+          // 专门锁定 href="#" 且带有 onclick 的 a 标签
+          const targetedLinks = document.querySelectorAll(&apos;a[href="#"][onclick]&apos;);
+          for (let i = 0; i &lt; targetedLinks.length; i++) {
+            targetedLinks[i].removeAttribute(&apos;onclick&apos;);
+            targetedLinks[i].onclick = null; // 确保 JS 层的赋值也被清理
+          }
+        };
+        // 3. 动态监测：防止页面通过异步加载重新生成带 onclick 的元素
+        var z_observer = new MutationObserver(function () {
+          Z_removeInlineOnclick();
+        });
+
+        z_observer.observe(document.documentElement, {
+          childList: true,
+          subtree: true,
+          attributes: true,
+          attributeFilter: [&apos;onclick&apos;]
+        });
+
+        // 4. 初始化执行一次
+        Z_removeInlineOnclick();
+
+        const Z_rawCreateElement = document.createElement;
+
+        document.createElement = function (tagName, ...args) {
+          const el = Z_rawCreateElement.call(this, tagName, ...args);
+
+          if (tagName.toLowerCase() === &apos;script&apos;) {
+            const rawSetAttribute = el.setAttribute;
+            const rawGetAttribute = el.getAttribute;
+            let srcValue = &apos;&apos;;
+            
+            el.setAttribute = function (name, value) {
+              if (name === &apos;src&apos; &amp;&amp; typeof value === &apos;string&apos;) {
+                value = z_proxyCdnUrl(value);
+                srcValue = value;
+              }
+              return rawSetAttribute.call(this, name, value);
+            };
+
+            Object.defineProperty(el, &apos;src&apos;, {
+              get: function() {
+                return srcValue || rawGetAttribute.call(this, &apos;src&apos;) || &apos;&apos;;
+              },
+              set: function(value) {
+                if (typeof value === &apos;string&apos;) {
+                  srcValue = z_proxyCdnUrl(value);
+                  rawSetAttribute.call(this, &apos;src&apos;, srcValue);
+                } else {
+                  srcValue = value;
+                }
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
+
+          if (tagName.toLowerCase() === &apos;link&apos;) {
+            const rawSetAttribute = el.setAttribute;
+            const rawGetAttribute = el.getAttribute;
+            let hrefValue = &apos;&apos;;
+            
+            el.setAttribute = function (name, value) {
+              if (name === &apos;href&apos; &amp;&amp; typeof value === &apos;string&apos;) {
+                value = z_proxyCdnUrl(value);
+                hrefValue = value;
+              }
+              return rawSetAttribute.call(this, name, value);
+            };
+
+            Object.defineProperty(el, &apos;href&apos;, {
+              get: function() {
+                return hrefValue || rawGetAttribute.call(this, &apos;href&apos;) || &apos;&apos;;
+              },
+              set: function(value) {
+                if (typeof value === &apos;string&apos;) {
+                  hrefValue = z_proxyCdnUrl(value);
+                  rawSetAttribute.call(this, &apos;href&apos;, hrefValue);
+                } else {
+                  hrefValue = value;
+                }
+              },
+              configurable: true,
+              enumerable: true
+            });
+          }
+
+          return el;
+        };
+
+        const Z_OriginalXMLHttpRequest = window.XMLHttpRequest;
+        window.XMLHttpRequest = function (...args) {
+          const xhr = new Z_OriginalXMLHttpRequest(...args);
+          const rawOpen = xhr.open;
+
+          xhr.open = function (method, url, ...rest) {
+            if (typeof url === &apos;string&apos;) {
+              const methodUpper = (method || &apos;&apos;).toUpperCase();
+              if (methodUpper === &apos;GET&apos; &amp;&amp; z_isUrlInWhitelist(url)) {
+                url = z_proxyCdnUrl(url);
+              }
+            }
+            return rawOpen.call(this, method, url, ...rest);
+          };
+
+          return xhr;
+        };
+
+        window.XMLHttpRequest.prototype = Z_OriginalXMLHttpRequest.prototype;
+        Object.setPrototypeOf(window.XMLHttpRequest, Z_OriginalXMLHttpRequest);
+
+        const z_originalFetch = window.fetch;
+        window.fetch = async function (...args) {
+          if (args.length &gt; 0) {
+            let url = &apos;&apos;;
+            let method = &apos;GET&apos;;
+            
+            if (typeof args[0] === &apos;string&apos;) {
+              url = args[0];
+              if (args[1] &amp;&amp; args[1].method) {
+                method = args[1].method.toUpperCase();
+              }
+              if (method === &apos;GET&apos; &amp;&amp; z_isUrlInWhitelist(url)) {
+                args[0] = z_proxyCdnUrl(url);
+              }
+            } else if (args[0] instanceof Request) {
+              const originalUrl = args[0].url;
+              method = (args[0].method || &apos;GET&apos;).toUpperCase();
+              if (method === &apos;GET&apos; &amp;&amp; z_isUrlInWhitelist(originalUrl)) {
+                const proxiedUrl = z_proxyCdnUrl(originalUrl);
+                if (proxiedUrl !== originalUrl) {
+                  args[0] = new Request(proxiedUrl, args[0]);
+                }
+              }
+            }
+          }
+          return z_originalFetch.apply(this, args);
+        };
+      &lt;/script&gt;
+    &lt;/head&gt;
+    &lt;body&gt;
+      &lt;html lang="ko"&gt;&lt;head&gt;
+&lt;meta charset="UTF-8"&gt;
+&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+&lt;title&gt;DevCanvas — 기획을 코드로 만들어주는 AI 디자인 스튜디오&lt;/title&gt;
+&lt;script src="https://artifacts-cdn.chatglm.site/https://cdn.tailwindcss.com"&gt;&lt;/script&gt;
+&lt;!-- JSZip 라이브러리 추가 (ZIP 파일 생성용) --&gt;
+&lt;script src="https://artifacts-cdn.chatglm.site/https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"&gt;&lt;/script&gt;
+&lt;link rel="stylesheet" href="https://artifacts-cdn.chatglm.site/https://cdn.jsdelivr.net/gh/webfontworld/gmarketsans/GmarketSans.css"&gt;
+&lt;link rel="preconnect" href="https://artifacts-cdn.chatglm.site/https://fonts.googleapis.com"&gt;
+&lt;link rel="preconnect" href="https://artifacts-cdn.chatglm.site/https://fonts.gstatic.com" crossorigin=""&gt;
+&lt;link href="https://artifacts-cdn.chatglm.site/https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&amp;amp;display=swap" rel="stylesheet"&gt;
+&lt;script&gt;
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        bg: &apos;#FAF9F5&apos;,
+        &apos;bg-soft&apos;: &apos;#F5F4EE&apos;,
+        surface: &apos;#FFFFFF&apos;,
+        &apos;surface-alt&apos;: &apos;#F0EEE6&apos;,
+        &apos;surface-deep&apos;: &apos;#EAE7DC&apos;,
+        border: &apos;#E5E2D8&apos;,
+        &apos;border-strong&apos;: &apos;#DAD6CB&apos;,
+        text: &apos;#1F1E1D&apos;,
+        &apos;text-soft&apos;: &apos;#2D2B27&apos;,
+        &apos;text-muted&apos;: &apos;#6B6760&apos;,
+        &apos;text-faint&apos;: &apos;#9A958B&apos;,
+        accent: &apos;#C96442&apos;,
+        &apos;accent-hover&apos;: &apos;#B5533A&apos;,
+        &apos;accent-soft&apos;: &apos;#F4E8E1&apos;,
+        success: &apos;#5C8A4A&apos;,
+        &apos;success-soft&apos;: &apos;#E8EFE3&apos;,
+        danger: &apos;#B5524A&apos;,
+        &apos;danger-soft&apos;: &apos;#F2E3E1&apos;,
+        warn: &apos;#B8893A&apos;,
+      },
+      fontFamily: {
+        sans: [&apos;"GmarketSans"&apos;, &apos;sans-serif&apos;],
+        mono: [&apos;"JetBrains Mono"&apos;, &apos;ui-monospace&apos;, &apos;monospace&apos;],
+      },
+      fontSize: {
+        &apos;2xs&apos;: [&apos;11px&apos;, &apos;1.4&apos;],
+      }
+    }
+  }
+}
+&lt;/script&gt;
+&lt;style&gt;
+:root {
+  --bg: #FAF9F5;
+  --surface: #FFFFFF;
+  --surface-alt: #F0EEE6;
+  --border: #E5E2D8;
+  --text: #1F1E1D;
+  --text-muted: #6B6760;
+  --accent: #C96442;
+}
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: &apos;GmarketSans&apos;, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  margin: 0;
+  padding: 0;
+}
+body.studio-active { overflow: hidden; }
+
+.font-serif { 
+  font-family: &apos;GmarketSans&apos;, sans-serif; 
+  font-weight: 700; 
+  letter-spacing: -0.02em;
+}
+.font-mono { font-family: &apos;JetBrains Mono&apos;, ui-monospace, monospace; }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #DAD6CB; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #C4BFB2; }
+
+.view { animation: fadeIn .35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(4px);} to { opacity:1; transform: none; } }
+
+.fade-up { animation: fadeUp .8s cubic-bezier(.2,.7,.2,1) both; }
+@keyframes fadeUp { from { opacity:0; transform: translateY(16px);} to {opacity:1; transform:none;} }
+.delay-1 { animation-delay: .1s; } .delay-2 { animation-delay: .2s; } .delay-3 { animation-delay: .3s; } .delay-4 { animation-delay: .4s; } .delay-5 { animation-delay: .5s; }
+
+.tk-key { color: #B5524A; }
+.tk-str { color: #5C8A4A; }
+.tk-fn  { color: #C96442; }
+.tk-com { color: #9A958B; font-style: italic; }
+.tk-tag { color: #B5524A; }
+.tk-attr{ color: #8B5A2B; }
+.tk-punc{ color: #6B6760; }
+
+.pulse-dot { position: relative; }
+.pulse-dot::after {
+  content:&apos;&apos;; position:absolute; inset:-4px; border-radius:50%;
+  background: currentColor; opacity:.25; animation: pulse 1.6s ease-out infinite;
+}
+@keyframes pulse { 0%{transform:scale(.6);opacity:.4;} 100%{transform:scale(1.8);opacity:0;} }
+
+.typing span {
+  display:inline-block; width:5px; height:5px; border-radius:50%;
+  background: #9A958B; margin: 0 1px;
+  animation: typing 1.2s ease-in-out infinite;
+}
+.typing span:nth-child(2){ animation-delay: .15s; }
+.typing span:nth-child(3){ animation-delay: .3s; }
+@keyframes typing { 0%,60%,100%{transform:translateY(0);opacity:.4;} 30%{transform:translateY(-3px);opacity:1;} }
+
+.skeleton {
+  background: linear-gradient(90deg, #F0EEE6 0%, #EAE7DC 50%, #F0EEE6 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+@keyframes shimmer { 0%{background-position: 200% 0;} 100%{background-position:-200% 0;} }
+
+.progress-bar::after {
+  content:&apos;&apos;; position:absolute; inset:0; width:30%;
+  background: linear-gradient(90deg, transparent, #C96442, transparent);
+  animation: progress 1.8s ease-in-out infinite;
+}
+@keyframes progress { 0%{transform:translateX(-100%);} 100%{transform:translateX(400%);} }
+
+.chip { transition: all .18s ease; }
+.chip:hover { border-color: #C96442; color: #C96442; background: #FFF; }
+
+.tab-btn { position: relative; transition: color .18s ease; }
+.tab-btn[aria-selected="true"] { color: #1F1E1D; }
+.tab-btn[aria-selected="true"]::after {
+  content:&apos;&apos;; position:absolute; left:0; right:0; bottom:-1px; height:2px; background:#C96442;
+}
+
+.diff-add { background: #E8EFE3; border-left: 2px solid #5C8A4A; }
+.diff-rm  { background: #F2E3E1; border-left: 2px solid #B5524A; }
+
+button:focus-visible, a:focus-visible, input:focus-visible, textarea:focus-visible {
+  outline: 2px solid #C96442; outline-offset: 2px; border-radius: 4px;
+}
+
+.studio-grid {
+  height: calc(100vh - 104px);
+}
+
+@media (max-width: 768px) {
+  .studio-grid { grid-template-columns: 1fr !important; height: auto; }
+  body.studio-active { overflow: auto; }
+}
+
+.paper {
+  background-image: radial-gradient(circle at 1px 1px, rgba(31,30,29,0.025) 1px, transparent 0);
+  background-size: 24px 24px;
+}
+.paper-dense {
+  background-image: radial-gradient(circle at 1px 1px, rgba(31,30,29,0.04) 1px, transparent 0);
+  background-size: 18px 18px;
+}
+
+.landing-card {
+  transition: border-color .2s ease, transform .2s ease;
+}
+.landing-card:hover {
+  border-color: #C96442;
+}
+&lt;/style&gt;
+&lt;/head&gt;
+&lt;body class="min-h-screen"&gt;
+
+&lt;!-- =================== TOP BAR =================== --&gt;
+&lt;header class="sticky top-0 z-40 backdrop-blur bg-bg/85 border-b border-border"&gt;
+&lt;div class="max-w-[1400px] mx-auto px-6 md:px-10 h-14 flex items-center justify-between"&gt;
+  &lt;div class="flex items-center gap-8"&gt;
+    &lt;a href="#" data-view="landing" class="flex items-center gap-2.5 group cursor-pointer"&gt;
+      &lt;div class="w-7 h-7 rounded-md border border-text/15 flex items-center justify-center bg-surface"&gt;
+        &lt;div class="w-3 h-3 rounded-sm bg-accent"&gt;&lt;/div&gt;
+      &lt;/div&gt;
+      &lt;span class="font-serif text-[19px] text-text"&gt;DevCanvas&lt;/span&gt;
+      &lt;span class="text-2xs font-mono text-text-faint border border-border-strong px-1.5 py-0.5 rounded"&gt;v2&lt;/span&gt;
+    &lt;/a&gt;
+    &lt;nav class="hidden md:flex items-center gap-1 text-[13px]"&gt;
+      &lt;button data-view="landing" class="nav-btn px-3 py-1.5 rounded-md text-text-muted hover:text-text hover:bg-surface-alt transition" aria-selected="true"&gt;소개&lt;/button&gt;
+      &lt;button data-view="studio" class="nav-btn px-3 py-1.5 rounded-md text-text-muted hover:text-text hover:bg-surface-alt transition"&gt;스튜디오&lt;/button&gt;
+      &lt;a href="#" class="px-3 py-1.5 rounded-md text-text-muted hover:text-text hover:bg-surface-alt transition"&gt;문서&lt;/a&gt;
+    &lt;/nav&gt;
+  &lt;/div&gt;
+  &lt;div class="flex items-center gap-2"&gt;
+    &lt;a href="#" class="hidden md:inline-flex items-center gap-1.5 text-[13px] text-text-muted hover:text-text px-3 py-1.5 rounded-md transition"&gt;
+      &lt;svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"&gt;&lt;path d="M9 19c-5 0-8-3-8-7s3-7 8-7c2 0 3 .5 4 1.5"&gt;&lt;/path&gt;&lt;path d="M15 5c5 0 8 3 8 7s-3 7-8 7c-2 0-3-.5-4-1.5"&gt;&lt;/path&gt;&lt;/svg&gt;
+      공개 프로젝트
+    &lt;/a&gt;
+    &lt;button data-view="studio" class="cta-studio text-[13px] font-medium px-3.5 py-1.5 rounded-md bg-text text-bg hover:bg-text-soft transition"&gt;
+      스튜디오 열기
+    &lt;/button&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+&lt;/header&gt;
+
+&lt;!-- =================== LANDING VIEW =================== --&gt;
+&lt;main id="view-landing" class="view"&gt;
+
+&lt;!-- HERO --&gt;
+&lt;section class="paper relative overflow-hidden border-b border-border"&gt;
+  &lt;div class="max-w-[1400px] mx-auto px-6 md:px-10 pt-24 md:pt-36 pb-24 md:pb-32"&gt;
+    &lt;div class="grid lg:grid-cols-12 gap-16 items-start"&gt;
+      
+      &lt;div class="lg:col-span-7 fade-up"&gt;
+        &lt;div class="inline-flex items-center gap-2 text-[12px] text-text-muted border border-border-strong rounded-full pl-1.5 pr-3 py-1 mb-10 bg-surface/50"&gt;
+          &lt;span class="text-[10px] font-mono bg-accent text-white px-1.5 py-0.5 rounded"&gt;NEW&lt;/span&gt;
+          대화형 디자인 스튜디오 v2 출시
+        &lt;/div&gt;
+        
+        &lt;h1 class="font-serif text-[44px] md:text-[68px] leading-[1.1] tracking-tight text-text"&gt;
+          기획을 &lt;span class="text-accent"&gt;프롬프트&lt;/span&gt;에,&lt;br&gt;
+          구현은 &lt;span class="text-accent"&gt;코드&lt;/span&gt;로.
+        &lt;/h1&gt;
+        
+        &lt;p class="mt-8 text-[17px] md:text-[19px] leading-[1.6] text-text-soft max-w-[580px] font-light"&gt;
+          디자이너 없이도 완성도 높은 UI를 만들 수 있는 AI 디자인 스튜디오. 화면 구조, 상태별 UI, 디자인 토큰, 복사 가능한 React 코드까지. 이제 대화로 다듬습니다.
+        &lt;/p&gt;
+        
+        &lt;div class="mt-12 flex flex-wrap items-center gap-4"&gt;
+          &lt;button data-view="studio" class="cta-studio inline-flex items-center gap-2 bg-accent hover:bg-accent-hover text-white text-[15px] font-medium px-6 py-3.5 rounded-md transition"&gt;
+            스튜디오에서 시작하기
+            &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"&gt;&lt;path d="M5 12h14M13 5l7 7-7 7"&gt;&lt;/path&gt;&lt;/svg&gt;
+          &lt;/button&gt;
+          &lt;a href="#features" class="inline-flex items-center gap-2 text-[15px] text-text px-6 py-3.5 rounded-md border border-border-strong hover:border-text-muted hover:bg-surface/50 transition"&gt;
+            핵심 기능 살펴보기
+          &lt;/a&gt;
+        &lt;/div&gt;
+
+        &lt;div class="mt-16 pt-8 border-t border-border grid grid-cols-3 gap-8 max-w-[480px]"&gt;
+          &lt;div&gt;
+            &lt;div class="font-serif text-[28px] text-text"&gt;6+&lt;/div&gt;
+            &lt;div class="text-[11px] font-mono text-text-muted uppercase tracking-wider mt-1"&gt;상태 자동 생성&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div&gt;
+            &lt;div class="font-serif text-[28px] text-text"&gt;0ms&lt;/div&gt;
+            &lt;div class="text-[11px] font-mono text-text-muted uppercase tracking-wider mt-1"&gt;수동 코딩&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div&gt;
+            &lt;div class="font-serif text-[28px] text-text"&gt;MIT&lt;/div&gt;
+            &lt;div class="text-[11px] font-mono text-text-muted uppercase tracking-wider mt-1"&gt;코드 라이선스&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="lg:col-span-5 fade-up delay-2 relative h-[480px] hidden lg:block"&gt;
+        &lt;div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[110%] h-[110%] paper-dense opacity-60 rounded-full"&gt;&lt;/div&gt;
+
+        &lt;div class="absolute top-8 right-0 w-[360px] bg-surface border border-border rounded-lg overflow-hidden shadow-[0_2px_4px_rgba(31,30,29,0.04),0_12px_32px_-12px_rgba(31,30,29,0.1)] rotate-1 hover:rotate-0 transition-transform duration-500"&gt;
+          &lt;div class="h-8 border-b border-border flex items-center px-3 gap-1.5 bg-bg-soft/50"&gt;
+            &lt;div class="w-2 h-2 rounded-full bg-border-strong"&gt;&lt;/div&gt;
+            &lt;div class="w-2 h-2 rounded-full bg-border-strong"&gt;&lt;/div&gt;
+            &lt;div class="w-2 h-2 rounded-full bg-border-strong"&gt;&lt;/div&gt;
+            &lt;div class="ml-3 text-[10px] font-mono text-text-faint"&gt;app/page.tsx&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class="p-4"&gt;
+            &lt;div class="flex items-center gap-2 mb-3"&gt;
+              &lt;div class="w-5 h-5 rounded-md bg-accent-soft border border-accent/20 flex items-center justify-center"&gt;
+                &lt;div class="w-2 h-2 rounded-sm bg-accent"&gt;&lt;/div&gt;
+              &lt;/div&gt;
+              &lt;div class="font-serif text-[14px] text-text"&gt;고객 대시보드&lt;/div&gt;
+              &lt;span class="ml-auto text-[9px] font-mono px-1.5 py-0.5 rounded bg-success-soft text-success"&gt;default&lt;/span&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="grid grid-cols-3 gap-2 mb-3"&gt;
+              &lt;div class="bg-bg-soft border border-border rounded p-2"&gt;
+                &lt;div class="text-[9px] font-mono text-text-muted"&gt;MRR&lt;/div&gt;
+                &lt;div class="text-[12px] font-mono text-text mt-0.5"&gt;₩12.4M&lt;/div&gt;
+              &lt;/div&gt;
+              &lt;div class="bg-bg-soft border border-border rounded p-2"&gt;
+                &lt;div class="text-[9px] font-mono text-text-muted"&gt;ACTIVE&lt;/div&gt;
+                &lt;div class="text-[12px] font-mono text-text mt-0.5"&gt;1,102&lt;/div&gt;
+              &lt;/div&gt;
+              &lt;div class="bg-bg-soft border border-border rounded p-2"&gt;
+                &lt;div class="text-[9px] font-mono text-text-muted"&gt;CHURN&lt;/div&gt;
+                &lt;div class="text-[12px] font-mono text-text mt-0.5"&gt;1.4%&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+
+            &lt;div class="bg-bg-soft border border-border rounded p-2 space-y-1.5"&gt;
+              &lt;div class="flex items-center justify-between text-[10px]"&gt;
+                &lt;div class="flex items-center gap-1.5"&gt;
+                  &lt;div class="w-4 h-4 rounded-full bg-accent/20"&gt;&lt;/div&gt;
+                  &lt;span class="text-text"&gt;김지호&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;span class="font-mono text-text-muted"&gt;₩29,000&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="flex items-center justify-between text-[10px]"&gt;
+                &lt;div class="flex items-center gap-1.5"&gt;
+                  &lt;div class="w-4 h-4 rounded-full bg-accent/20"&gt;&lt;/div&gt;
+                  &lt;span class="text-text"&gt;박서아&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;span class="font-mono text-text-muted"&gt;₩59,000&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="flex items-center justify-between text-[10px]"&gt;
+                &lt;div class="flex items-center gap-1.5"&gt;
+                  &lt;div class="w-4 h-4 rounded-full bg-accent/20"&gt;&lt;/div&gt;
+                  &lt;span class="text-text"&gt;이도윤&lt;/span&gt;
+                &lt;/div&gt;
+                &lt;span class="font-mono text-text-muted"&gt;₩0&lt;/span&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        &lt;div class="absolute top-0 left-0 w-[280px] bg-surface border border-border rounded-lg rounded-tl-sm shadow-sm p-3 -rotate-3 hover:rotate-0 transition-transform duration-500 z-10"&gt;
+          &lt;div class="flex items-center gap-1.5 mb-1.5"&gt;
+            &lt;div class="w-4 h-4 rounded-sm bg-text flex items-center justify-center"&gt;
+              &lt;svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"&gt;&lt;path d="M12 5v14M5 12h14"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;/div&gt;
+            &lt;span class="text-[10px] font-mono text-text-muted"&gt;user&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;p class="text-[11px] text-text leading-relaxed"&gt;
+            정기결제 SaaS 관리자 페이지 만들어줘. 결제 상태 필터와 상세 보기 포함.
+          &lt;/p&gt;
+        &lt;/div&gt;
+
+        &lt;div class="absolute bottom-12 left-4 w-[180px] bg-surface border border-border rounded-md shadow-sm p-3 rotate-3 hover:rotate-0 transition-transform duration-500"&gt;
+          &lt;div class="text-[9px] font-mono text-text-faint uppercase tracking-wider mb-2 border-b border-border pb-1.5"&gt;design tokens&lt;/div&gt;
+          &lt;div class="flex flex-wrap gap-1"&gt;
+            &lt;div class="w-4 h-4 rounded-sm" style="background:#FAF9F5; border:1px solid #E5E2D8"&gt;&lt;/div&gt;
+            &lt;div class="w-4 h-4 rounded-sm" style="background:#1F1E1D"&gt;&lt;/div&gt;
+            &lt;div class="w-4 h-4 rounded-sm" style="background:#C96442"&gt;&lt;/div&gt;
+            &lt;div class="w-4 h-4 rounded-sm" style="background:#5C8A4A"&gt;&lt;/div&gt;
+            &lt;div class="w-4 h-4 rounded-sm" style="background:#B5524A"&gt;&lt;/div&gt;
+            &lt;div class="w-4 h-4 rounded-sm" style="background:#F0EEE6; border:1px solid #E5E2D8"&gt;&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class="mt-2 text-[9px] font-mono text-text-muted"&gt;6 colors extracted&lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- MANIFESTO / QUOTE --&gt;
+&lt;section class="border-b border-border"&gt;
+  &lt;div class="max-w-[1000px] mx-auto px-6 md:px-10 py-20 md:py-28 text-center"&gt;
+    &lt;div class="text-[11px] font-mono text-text-faint uppercase tracking-[0.2em] mb-6 fade-up"&gt;WHY DEVCANVAS&lt;/div&gt;
+    &lt;h2 class="font-serif text-[28px] md:text-[40px] leading-[1.35] tracking-tight text-text-soft fade-up delay-1"&gt;
+      "예쁜 이미지"가 아니라 &lt;span class="text-accent"&gt;"당장 붙여 쓸 수 있는 결과물"&lt;/span&gt;을 만듭니다.
+      &lt;br&gt;한 화면이 아니라 전체 상태(Loading, Empty, Error)까지 함께.
+    &lt;/h2&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- FEATURE 1: PROMPT TO UI --&gt;
+&lt;section id="features" class="border-b border-border bg-surface"&gt;
+  &lt;div class="max-w-[1400px] mx-auto px-6 md:px-10 py-24 md:py-32"&gt;
+    &lt;div class="grid lg:grid-cols-12 gap-12 items-center"&gt;
+      
+      &lt;div class="lg:col-span-5 fade-up"&gt;
+        &lt;div class="text-[11px] font-mono text-accent uppercase tracking-[0.2em] mb-4"&gt;01 — PROCESS&lt;/div&gt;
+        &lt;h2 class="font-serif text-[36px] md:text-[44px] leading-[1.15] tracking-tight text-text mb-6"&gt;
+          프롬프트 한 줄이&lt;br&gt;
+          &lt;span class="text-accent"&gt;전체 화면 구조&lt;/span&gt;로.
+        &lt;/h2&gt;
+        &lt;p class="text-[16px] leading-[1.7] text-text-muted max-w-[480px]"&gt;
+          화면 하나를 찍어주는 도구와 다릅니다. 비즈니스 맥락을 이해하고, 라우팅 계층을 설계하며, 각 페이지가 담당할 역할을 정의합니다. 당연히 상태별 UI도 함께.
+        &lt;/p&gt;
+        
+        &lt;div class="mt-8 space-y-3"&gt;
+          &lt;div class="flex items-start gap-3"&gt;
+            &lt;div class="w-5 h-5 rounded-full bg-success-soft border border-success/30 flex items-center justify-center mt-0.5"&gt;
+              &lt;svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#5C8A4A" stroke-width="3"&gt;&lt;path d="M20 6L9 17l-5-5"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;div class="text-[14px] text-text font-medium"&gt;자연어 요구사항 분석&lt;/div&gt;
+              &lt;div class="text-[12px] text-text-muted"&gt;복잡한 비즈니스 로직도 이해합니다.&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class="flex items-start gap-3"&gt;
+            &lt;div class="w-5 h-5 rounded-full bg-success-soft border border-success/30 flex items-center justify-center mt-0.5"&gt;
+              &lt;svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#5C8A4A" stroke-width="3"&gt;&lt;path d="M20 6L9 17l-5-5"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;div class="text-[14px] text-text font-medium"&gt;정보 아키텍처 설계&lt;/div&gt;
+              &lt;div class="text-[12px] text-text-muted"&gt;URL 구조와 페이지 위계를 자동으로.&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class="flex items-start gap-3"&gt;
+            &lt;div class="w-5 h-5 rounded-full bg-success-soft border border-success/30 flex items-center justify-center mt-0.5"&gt;
+              &lt;svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#5C8A4A" stroke-width="3"&gt;&lt;path d="M20 6L9 17l-5-5"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;/div&gt;
+            &lt;div&gt;
+              &lt;div class="text-[14px] text-text font-medium"&gt;대화로 반복 정제&lt;/div&gt;
+              &lt;div class="text-[12px] text-text-muted"&gt;"버튼 더 둥글게", "모바일은 카드형으로".&lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="lg:col-span-7 fade-up delay-2"&gt;
+        &lt;div class="relative bg-bg-soft border border-border rounded-xl p-8 paper-dense"&gt;
+          &lt;div class="bg-surface border border-border rounded-lg overflow-hidden shadow-sm"&gt;
+            &lt;div class="px-4 py-2 border-b border-border flex items-center justify-between bg-bg-soft/50"&gt;
+              &lt;div class="flex items-center gap-2"&gt;
+                &lt;div class="w-2 h-2 rounded-full bg-accent"&gt;&lt;/div&gt;
+                &lt;span class="text-[11px] font-mono text-text-muted"&gt;studio session&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;span class="text-[10px] font-mono text-text-faint"&gt;3 turns&lt;/span&gt;
+            &lt;/div&gt;
+            
+            &lt;div class="p-5 space-y-4 bg-bg-soft"&gt;
+              &lt;div class="flex justify-end"&gt;
+                &lt;div class="max-w-[80%] bg-text text-bg rounded-lg rounded-tr-sm px-3 py-2 text-[12px]"&gt;
+                  채용 플랫폼 공고 목록 만들어줘. 필터 사이드바랑 상세 모달 포함.
+                &lt;/div&gt;
+              &lt;/div&gt;
+              
+              &lt;div class="flex justify-start"&gt;
+                &lt;div class="max-w-[85%] space-y-2"&gt;
+                  &lt;div class="flex items-center gap-1.5"&gt;
+                    &lt;div class="w-4 h-4 rounded-sm border border-border-strong bg-surface flex items-center justify-center"&gt;
+                      &lt;div class="w-1.5 h-1.5 rounded-sm bg-accent"&gt;&lt;/div&gt;
+                    &lt;/div&gt;
+                    &lt;span class="text-[10px] font-mono text-text-muted"&gt;DevCanvas&lt;/span&gt;
+                  &lt;/div&gt;
+                  &lt;div class="bg-surface border border-border rounded-lg rounded-tl-sm px-3 py-2 text-[12px] text-text-soft"&gt;
+                    네, 채용 플랫폼 공고 목록을 설계했어요. 좌측 필터 사이드바, 메인 카드 리스트, 우측 상세 드로어 구조입니다.
+                  &lt;/div&gt;
+                  &lt;div class="bg-surface border border-border rounded-lg overflow-hidden"&gt;
+                    &lt;div class="px-2 py-1 border-b border-border text-[9px] font-mono text-text-faint uppercase flex items-center justify-between"&gt;
+                      &lt;span&gt;작업 단계&lt;/span&gt;
+                      &lt;span class="text-success"&gt;5/5 완료&lt;/span&gt;
+                    &lt;/div&gt;
+                    &lt;div class="p-2 space-y-1 text-[10px] font-mono text-text-muted"&gt;
+                      &lt;div class="flex items-center gap-1.5"&gt;&lt;span class="text-success"&gt;✓&lt;/span&gt; 요구사항 분석&lt;/div&gt;
+                      &lt;div class="flex items-center gap-1.5"&gt;&lt;span class="text-success"&gt;✓&lt;/span&gt; UX 구조 설계&lt;/div&gt;
+                      &lt;div class="flex items-center gap-1.5"&gt;&lt;span class="text-success"&gt;✓&lt;/span&gt; 컴포넌트 생성 (8개)&lt;/div&gt;
+                      &lt;div class="flex items-center gap-1.5"&gt;&lt;span class="text-success"&gt;✓&lt;/span&gt; 상태별 UI (5개)&lt;/div&gt;
+                      &lt;div class="flex items-center gap-1.5"&gt;&lt;span class="text-success"&gt;✓&lt;/span&gt; 코드 검증&lt;/div&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+
+              &lt;div class="flex justify-end"&gt;
+                &lt;div class="max-w-[80%] bg-text text-bg rounded-lg rounded-tr-sm px-3 py-2 text-[12px]"&gt;
+                  모바일에서는 필터를 바텀시트로 바꿔줘.
+                &lt;/div&gt;
+              &lt;/div&gt;
+
+              &lt;div class="flex justify-start"&gt;
+                &lt;div class="flex items-center gap-1.5 bg-surface border border-border rounded-full px-3 py-1.5"&gt;
+                  &lt;span class="typing"&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;span&gt;&lt;/span&gt;&lt;/span&gt;
+                  &lt;span class="text-[10px] text-text-muted"&gt;수정 중...&lt;/span&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- FEATURE 2: STATE MATRIX --&gt;
+&lt;section class="border-b border-border bg-bg-soft paper"&gt;
+  &lt;div class="max-w-[1400px] mx-auto px-6 md:px-10 py-24 md:py-32"&gt;
+    &lt;div class="grid lg:grid-cols-12 gap-12 items-center"&gt;
+      
+      &lt;div class="lg:col-span-6 order-2 lg:order-1 fade-up delay-2"&gt;
+        &lt;div class="bg-surface border border-border rounded-xl p-6 shadow-[0_1px_2px_rgba(31,30,29,0.04),0_12px_32px_-12px_rgba(31,30,29,0.08)]"&gt;
+          &lt;div class="flex items-center justify-between mb-4 pb-3 border-b border-border"&gt;
+            &lt;div class="flex items-center gap-2"&gt;
+              &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F1E1D" stroke-width="2"&gt;&lt;rect x="3" y="3" width="7" height="7"&gt;&lt;/rect&gt;&lt;rect x="14" y="3" width="7" height="7"&gt;&lt;/rect&gt;&lt;rect x="3" y="14" width="7" height="7"&gt;&lt;/rect&gt;&lt;rect x="14" y="14" width="7" height="7"&gt;&lt;/rect&gt;&lt;/svg&gt;
+              &lt;span class="font-serif text-[16px] text-text"&gt;State Matrix&lt;/span&gt;
+            &lt;/div&gt;
+            &lt;span class="text-[10px] font-mono px-2 py-0.5 rounded bg-accent-soft text-accent"&gt;화면 × 상태&lt;/span&gt;
+          &lt;/div&gt;
+          
+          &lt;div class="grid grid-cols-3 gap-3"&gt;
+            &lt;div class="border border-border rounded-md overflow-hidden bg-bg-soft"&gt;
+              &lt;div class="px-2 py-1 border-b border-border flex items-center justify-between bg-surface"&gt;
+                &lt;span class="text-[9px] font-mono text-text-muted"&gt;default&lt;/span&gt;
+                &lt;span class="w-1.5 h-1.5 rounded-full bg-success"&gt;&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="p-2 space-y-1"&gt;
+                &lt;div class="h-1.5 w-3/4 bg-border rounded"&gt;&lt;/div&gt;
+                &lt;div class="h-4 bg-surface border border-border rounded mt-1"&gt;&lt;/div&gt;
+                &lt;div class="h-4 bg-surface border border-border rounded"&gt;&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="border border-border rounded-md overflow-hidden bg-bg-soft"&gt;
+              &lt;div class="px-2 py-1 border-b border-border flex items-center justify-between bg-surface"&gt;
+                &lt;span class="text-[9px] font-mono text-text-muted"&gt;loading&lt;/span&gt;
+                &lt;span class="w-1.5 h-1.5 rounded-full bg-warn"&gt;&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="p-2 space-y-1"&gt;
+                &lt;div class="h-1.5 w-3/4 skeleton rounded"&gt;&lt;/div&gt;
+                &lt;div class="h-4 skeleton rounded mt-1"&gt;&lt;/div&gt;
+                &lt;div class="h-4 skeleton rounded"&gt;&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="border border-border rounded-md overflow-hidden bg-bg-soft"&gt;
+              &lt;div class="px-2 py-1 border-b border-border flex items-center justify-between bg-surface"&gt;
+                &lt;span class="text-[9px] font-mono text-text-muted"&gt;empty&lt;/span&gt;
+                &lt;span class="w-1.5 h-1.5 rounded-full bg-text-faint"&gt;&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="p-2 flex flex-col items-center justify-center py-3"&gt;
+                &lt;div class="w-4 h-4 rounded-full border border-border-strong mb-1"&gt;&lt;/div&gt;
+                &lt;div class="h-1 w-2/3 bg-border rounded"&gt;&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="border border-border rounded-md overflow-hidden bg-bg-soft"&gt;
+              &lt;div class="px-2 py-1 border-b border-border flex items-center justify-between bg-surface"&gt;
+                &lt;span class="text-[9px] font-mono text-text-muted"&gt;error&lt;/span&gt;
+                &lt;span class="w-1.5 h-1.5 rounded-full bg-danger"&gt;&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="p-2 flex flex-col items-center justify-center py-3"&gt;
+                &lt;div class="text-danger text-[14px] font-serif mb-0.5"&gt;!&lt;/div&gt;
+                &lt;div class="h-1 w-3/4 bg-danger-soft rounded"&gt;&lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="border border-border rounded-md overflow-hidden bg-bg-soft"&gt;
+              &lt;div class="px-2 py-1 border-b border-border flex items-center justify-between bg-surface"&gt;
+                &lt;span class="text-[9px] font-mono text-text-muted"&gt;403&lt;/span&gt;
+                &lt;span class="w-1.5 h-1.5 rounded-full bg-text-muted"&gt;&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="p-2 flex flex-col items-center justify-center py-3"&gt;
+                &lt;svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6760" stroke-width="1.5"&gt;&lt;rect x="3" y="11" width="18" height="11" rx="2"&gt;&lt;/rect&gt;&lt;path d="M7 11V7a5 5 0 0110 0v4"&gt;&lt;/path&gt;&lt;/svg&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+            &lt;div class="border border-border rounded-md overflow-hidden bg-bg-soft"&gt;
+              &lt;div class="px-2 py-1 border-b border-border flex items-center justify-between bg-surface"&gt;
+                &lt;span class="text-[9px] font-mono text-text-muted"&gt;mobile&lt;/span&gt;
+                &lt;span class="w-1.5 h-1.5 rounded-full bg-accent"&gt;&lt;/span&gt;
+              &lt;/div&gt;
+              &lt;div class="p-2 flex justify-center"&gt;
+                &lt;div class="w-8 h-12 border border-border-strong rounded p-0.5 bg-surface"&gt;
+                  &lt;div class="h-0.5 w-3/4 bg-border rounded mb-0.5"&gt;&lt;/div&gt;
+                  &lt;div class="h-2 bg-border rounded mb-0.5"&gt;&lt;/div&gt;
+                  &lt;div class="h-2 bg-border rounded mb-0.5"&gt;&lt;/div&gt;
+                  &lt;div class="h-2 bg-border rounded"&gt;&lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+
+          &lt;div class="mt-4 pt-3 border-t border-border flex items-center justify-between"&gt;
+            &lt;span class="text-[10px] font-mono text-text-muted"&gt;3 screens × 6 states = 18 variations&lt;/span&gt;
+            &lt;button class="text-[10px] font-mono text-accent hover:underline"&gt;상세 보기 →&lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="lg:col-span-6 order-1 lg:order-2 fade-up"&gt;
+        &lt;div class="text-[11px] font-mono text-accent uppercase tracking-[0.2em] mb-4"&gt;02 — COMPLETENESS&lt;/div&gt;
+        &lt;h2 class="font-serif text-[36px] md:text-[44px] leading-[1.15] tracking-tight text-text mb-6"&gt;
+          한 화면이 아니라&lt;br&gt;
+          &lt;span class="text-accent"&gt;모든 상태&lt;/span&gt;를 함께.
+        &lt;/h2&gt;
+        &lt;p class="text-[16px] leading-[1.7] text-text-muted max-w-[480px]"&gt;
+          보통의 도구는 &apos;행복한 경로&apos;의 디자인 하나만 줍니다. DevCanvas는 로딩, 빈 데이터, 에러, 권한 없음, 모바일까지 — 실 서비스에 필요한 모든 상태를 한 번에 생성합니다. 디자이너가 가장 놓치기 쉬운 부분을 자동으로 채웁니다.
+        &lt;/p&gt;
+
+        &lt;div class="mt-8 grid grid-cols-2 gap-4 max-w-[440px]"&gt;
+          &lt;div class="border-l-2 border-accent pl-4"&gt;
+            &lt;div class="font-serif text-[24px] text-text"&gt;6가지&lt;/div&gt;
+            &lt;div class="text-[12px] text-text-muted mt-1"&gt;핵심 UI 상태 자동 생성&lt;/div&gt;
+          &lt;/div&gt;
+          &lt;div class="border-l-2 border-border-strong pl-4"&gt;
+            &lt;div class="font-serif text-[24px] text-text"&gt;100%&lt;/div&gt;
+            &lt;div class="text-[12px] text-text-muted mt-1"&gt;엣지 케이스 커버리지&lt;/div&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/section&gt;
+
+&lt;!-- FEATURE 3: CODE &amp; EXPORT --&gt;
+&lt;section class="border-b border-border bg-surface"&gt;
+  &lt;div class="max-w-[1400px] mx-auto px-6 md:px-10 py-24 md:py-32"&gt;
+    &lt;div class="grid lg:grid-cols-12 gap-12 items-center"&gt;
+      
+      &lt;div class="lg:col-span-5 fade-up"&gt;
+        &lt;div class="text-[11px] font-mono text-accent uppercase tracking-[0.2em] mb-4"&gt;03 — OUTPUT&lt;/div&gt;
+        &lt;h2 class="font-serif text-[36px] md:text-[44px] leading-[1.15] tracking-tight text-text mb-6"&gt;
+          복사하면&lt;br&gt;
+          &lt;span class="text-accent"&gt;그대로 동작하는&lt;/span&gt; 코드.
+        &lt;/h2&gt;
+        &lt;p class="text-[16px] leading-[1.7] text-text-muted max-w-[480px]"&gt;
+          Tailwind CSS와 shadcn/ui 기반의 표준 코드를 생성합니다. 디자인 토큰은 CSS 변수로 관리되고, 컴포넌트는 프로젝트에 바로 붙여넣으면 동작합니다. 별도의 수동 작업이 필요 없습니다.
+        &lt;/p&gt;
+
+        &lt;div class="mt-8 space-y-4"&gt;
+          &lt;div class="flex items-center gap-3 text-[14px] text-text"&gt;
+            &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F1E1D" stroke-width="2"&gt;&lt;path d="M16 18l6-6-6-6M8 6l-6 6 6 6"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;span&gt;&lt;span class="font-mono bg-bg-soft px-1.5 py-0.5 rounded"&gt;npm run dev&lt;/span&gt; 바로 실행 가능&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class="flex items-center gap-3 text-[14px] text-text"&gt;
+            &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F1E1D" stroke-width="2"&gt;&lt;path d="M16 18l6-6-6-6M8 6l-6 6 6 6"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;span&gt;Tailwind + shadcn/ui 표준 호환&lt;/span&gt;
+          &lt;/div&gt;
+          &lt;div class="flex items-center gap-3 text-[14px] text-text"&gt;
+            &lt;svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F1E1D" stroke-width="2"&gt;&lt;path d="M16 18l6-6-6-6M8 6l-6 6 6 6"&gt;&lt;/path&gt;&lt;/svg&gt;
+            &lt;span&gt;Next.js App Router 완벽 대응&lt;/span&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+
+      &lt;div class="lg:col-span-7 fade-up delay-2"&gt;
+        &lt;/div&gt;&lt;/div&gt;&lt;/div&gt;&lt;/section&gt;&lt;/main&gt;&lt;/body&gt;&lt;/html&gt;
+    &lt;/body&gt;
+  &lt;/html&gt;
+'
+			></iframe
+			><!---->
+			<section aria-live="polite" aria-relevant="additions text" aria-atomic="false" class="svelte-nbs0zk" tabindex="-1" aria-label="Notifications alt+T"><!----></section>
+			<!---->
+			<div class="fixed top-[60px] right-4 z-[9999] flex flex-col gap-3 pointer-events-none"></div>
+			<!----><!---->
+			<!---->
+		</div>
+
+		<script>
+			var token = localStorage.getItem("token");
+			var base = window.WEBUI_BASE_URL || "";
+			var lang = localStorage.locale ?? (navigator.language.includes("zh") ? "zh-CN" : "en-US");
+			var config = {
+				credentials: "include",
+				headers: {
+					Accept: "application/json",
+					"Content-Type": "application/json",
+					...(token ? { Authorization: `Bearer ${token}` } : {}),
+					"Accept-Language": lang,
+				},
+			};
+
+			var sessionFetch = fetch(`${base}/api/v1/auths/`, config).then(async (res) => {
+				if (!res.ok) throw await res.json();
+				return res.json();
+			});
+
+			window.GLOBAL_FETCHES = {
+				session: sessionFetch,
+				config: fetch(`${base}/api/config`, config).then(async (res) => {
+					if (!res.ok) throw await res.json();
+					return res.json();
+				}),
+				// token 存在时与其他请求并行；不存在时需等 session 之后再请求 models
+				// 至少要 cookie 里有 token 才能正常请求 models
+				models: token ? fetch(`${base}/api/models`, config) : sessionFetch.then(() => fetch(`${base}/api/models`, config)),
+				settings:
+					token &&
+					fetch(`${base}/api/v1/users/user/settings`, config).then(async (res) => {
+						if (!res.ok) throw await res.json();
+						return res.json();
+					}),
+			};
+		</script>
+		<script async="" src="//o.alicdn.com/frontend-lib/common-lib/jquery.min.js"></script>
+
+		<style type="text/css" nonce="">
+			@keyframes pulse {
+				50% {
+					opacity: 0.65;
+				}
+			}
+
+			.animate-pulse-fast {
+				animation: pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+			}
+		</style>
+	</body>
+</html>

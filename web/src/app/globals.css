@@ -1,3 +1,275 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+:root {
+  /* === DevCanvas 앱 디자인 시스템 (ADR-0019, design.html 기반) === */
+  --bg: #faf9f5;
+  --bg-soft: #f5f4ee;
+  --surface: #ffffff;
+  --surface-alt: #f0eee6;
+  --surface-deep: #eae7dc;
+  --border: #e5e2d8;
+  --border-strong: #dad6cb;
+  --text: #1f1e1d;
+  --text-soft: #2d2b27;
+  --text-muted: #6b6760;
+  --text-faint: #9a958b;
+  --accent: #c96442;
+  --accent-hover: #b5533a;
+  --accent-soft: #f4e8e1;
+  --success: #5c8a4a;
+  --success-soft: #e8efe3;
+  --danger: #b5524a;
+  --danger-soft: #f2e3e1;
+  --warn: #b8893a;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+body.studio-active {
+  overflow: hidden;
+}
+
+/* 스크롤바 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #dad6cb;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #c4bfb2;
+}
+
+/* 뷰 전환/등장 애니메이션 */
+.view {
+  animation: fadeIn 0.35s ease;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fade-up {
+  animation: fadeUp 0.8s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.delay-1 {
+  animation-delay: 0.1s;
+}
+.delay-2 {
+  animation-delay: 0.2s;
+}
+.delay-3 {
+  animation-delay: 0.3s;
+}
+.delay-4 {
+  animation-delay: 0.4s;
+}
+.delay-5 {
+  animation-delay: 0.5s;
+}
+
+/* 코드 신택스 토큰 */
+.tk-key {
+  color: #b5524a;
+}
+.tk-str {
+  color: #5c8a4a;
+}
+.tk-fn {
+  color: #c96442;
+}
+.tk-com {
+  color: #9a958b;
+  font-style: italic;
+}
+.tk-tag {
+  color: #b5524a;
+}
+.tk-attr {
+  color: #8b5a2b;
+}
+.tk-punc {
+  color: #6b6760;
+}
+
+/* 로딩 인디케이터 */
+.pulse-dot {
+  position: relative;
+}
+.pulse-dot::after {
+  content: "";
+  position: absolute;
+  inset: -4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.25;
+  animation: pulse 1.6s ease-out infinite;
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.typing span {
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #9a958b;
+  margin: 0 1px;
+  animation: typing 1.2s ease-in-out infinite;
+}
+.typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes typing {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.4;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+
+/* 스켈레톤 */
+.skeleton {
+  background: linear-gradient(90deg, #f0eee6 0%, #eae7dc 50%, #f0eee6 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.progress-bar::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 30%;
+  background: linear-gradient(90deg, transparent, #c96442, transparent);
+  animation: progress 1.8s ease-in-out infinite;
+}
+@keyframes progress {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(400%);
+  }
+}
+
+/* 칩/탭 인터랙션 */
+.chip {
+  transition: all 0.18s ease;
+}
+.chip:hover {
+  border-color: #c96442;
+  color: #c96442;
+  background: #fff;
+}
+
+.tab-btn {
+  position: relative;
+  transition: color 0.18s ease;
+}
+.tab-btn[aria-selected="true"] {
+  color: #1f1e1d;
+}
+.tab-btn[aria-selected="true"]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: #c96442;
+}
+
+/* diff */
+.diff-add {
+  background: #e8efe3;
+  border-left: 2px solid #5c8a4a;
+}
+.diff-rm {
+  background: #f2e3e1;
+  border-left: 2px solid #b5524a;
+}
+
+/* 포커스 */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #c96442;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* 종이 질감(dot grid) */
+.paper {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(31, 30, 29, 0.025) 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
+}
+.paper-dense {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    rgba(31, 30, 29, 0.04) 1px,
+    transparent 0
+  );
+  background-size: 18px 18px;
+}
+
+.landing-card {
+  transition: border-color 0.2s ease, transform 0.2s ease;
+}
+.landing-card:hover {
+  border-color: #c96442;
+}
