@@ -1,4 +1,8 @@
-"""generations 도메인 의존성."""
+"""파이프라인 공용 의존성 — LLM 어댑터 팩토리.
+
+LLM 포트(pipeline/llm.py)의 소유가 pipeline 이므로, 팩토리도 pipeline 의 public 자원.
+LLM 이 필요한 도메인(generations, sessions)은 여기서 의존을 가져간다(리뷰 P2-1).
+"""
 
 from __future__ import annotations
 

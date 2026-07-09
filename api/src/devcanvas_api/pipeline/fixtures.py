@@ -11,6 +11,8 @@ from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
     DesignSystem,
     DesignTokens,
+    GenerationInput,
+    GenerationResult,
     HandoffDoc,
     RequirementSpec,
     ReviewFinding,
@@ -148,4 +150,18 @@ def handoff() -> HandoffDoc:
         install_commands=["pnpm add @radix-ui/react-tabs"],
         todos=["mock 데이터를 실제 API로 교체", "권한별 분기 추가"],
         guide_md="# 고객 관리 페이지 구현 가이드\n(생성 뼈대)",
+    )
+
+
+def generation_result() -> GenerationResult:
+    """완전한 GenerationResult (편집 에이전트/더미 wiring 용, ADR-0018)."""
+    return GenerationResult(
+        input=GenerationInput(prompt="고객 관리 관리자 페이지"),
+        requirement=requirement(),
+        ux_plan=ux_plan(),
+        design_system=design_system(),
+        ui=ui_generation(),
+        code=code_generation().files,
+        review=review_report().findings,
+        handoff=handoff(),
     )

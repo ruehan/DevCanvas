@@ -1,3 +1,11 @@
+## 2026-07-09 — 대화형 세션 도메인 + 편집 에이전트 (B 사이클 1)
+- 브랜치: feat/conversation-sessions
+- 한 일: Claude Code 식 스튜디오 백엔드 파운데이션(ADR-0017/0018). sessions/ 도메인 — 인메모리 SessionStore(create/get/save), service.post_message(첫 턴=전체 파이프라인 7단계, 이후=apply_edit 1단계), router(POST /sessions, GET /sessions/{id}, POST /sessions/{id}/messages). pipeline/edit_agent.apply_edit(전체 결과 재생성, LLM). get_llm_adapter 를 pipeline/dependencies.py 로 이동(의존 방향 정리). design-brief.md 커밋.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 61파일/pytest), web(변경 없음)
+- 리뷰: 통과 2라운드 — 상세: docs/reviews/2026-07-09-대화형-세션-편집-에이전트.md
+- 가정: 인메모리 스토어(재시작 소실, Postgres는 이후 Phase). 편집은 더미에선 fixture(고정), 실 GLM 키로 품질 관측 필요. 스트리밍/점진적 단계는 다음 사이클(프론트 진입 시).
+- 관련 결정: docs/decisions/0017 (대화형 세션 모델·인메모리), 0018 (편집 에이전트 전체재생성)
+
 ## 2026-07-09 — GLM 어댑터 실구현체(glm-5.2)
 - 브랜치: feat/glm-adapter-impl
 - 한 일: GLMAdapter 실구현(ADR-0007 보류→채택). OpenAI 호환 /chat/completions(glm-5.2) 호출 → JSON 응답 Pydantic 검증. 응답검증 정책: 어댑터가 검증, 실패 시 GenerationError, MVP 재시도 없음. _extract_json(펜스/여분텍스트 처리). http_post 주입으로 네트워크 없이 테스트. settings.glm_model(기본 glm-5.2)/glm_api_base(기본 bigmodel v4). get_llm_adapter 키만 있으면 GLMAdapter. httpx 런타임 의존화.
