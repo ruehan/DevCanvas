@@ -277,3 +277,14 @@ textarea:focus-visible {
 .landing-card:hover {
   border-color: #c96442;
 }
+
+/* 스튜디오 2컬럼 그리드 — 툴바(56+48=104px) 아래 남은 높이. design.html 788-795 */
+.studio-grid {
+  height: calc(100vh - 104px);
+}
+@media (max-width: 768px) {
+  .studio-grid {
+    grid-template-columns: 1fr !important;
+    height: auto;
+  }
+}

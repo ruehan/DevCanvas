@@ -99,3 +99,27 @@ export interface GenerationResult {
   review: ReviewFinding[];
   handoff: HandoffDoc;
 }
+
+// ---- 세션/대화 (ADR-0017) ----
+
+export type MessageRole = "user" | "agent";
+
+export interface Message {
+  role: MessageRole;
+  content: string;
+  steps: string[];
+  created_at?: string;
+}
+
+export interface Session {
+  id: string;
+  created_at?: string;
+  messages: Message[];
+  current_result: GenerationResult | null;
+}
+
+export interface PostMessageResponse {
+  agent_message: Message;
+  result: GenerationResult;
+  session_id: string;
+}
