@@ -85,7 +85,7 @@ def test_glm_generate_omits_schema_when_include_schema_false() -> None:
     content = captured["kwargs"]["json"]["messages"][0]["content"]
     assert "결과를 수정하라" in content  # instruction 유지
     assert "current_result" in content  # context 유지
-    assert "동일한 JSON 구조" in content  # 스키마 대체 지시
+    assert "JSON 객체만" in content  # 중립 반환 지시(구조 지시는 호출자 instruction 소유)
     assert "$defs" not in content and "properties" not in content  # formal 스키마 미포함
 
 

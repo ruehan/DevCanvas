@@ -181,3 +181,20 @@ class GenerationResult(BaseModel):
     code: list[CodeFile] = Field(default_factory=list)
     review: list[ReviewFinding] = Field(default_factory=list)
     handoff: HandoffDoc = Field(default_factory=HandoffDoc)
+
+
+class GenerationResultPatch(BaseModel):
+    """편집 턴 부분 수정 패치 (ADR-0023).
+
+    전체 재생성 대신 LLM 이 '바뀐 최상위 섹션만' 반환한다. 모든 필드 Optional —
+    제공된(non-None) 필드만 기존 GenerationResult 를 덮어쓴다(최상위 교체 병합).
+    `input` 은 편집으로 바뀌지 않으므로 패치 대상에서 제외한다.
+    """
+
+    requirement: RequirementSpec | None = None
+    ux_plan: UXPlan | None = None
+    design_system: DesignSystem | None = None
+    ui: UIGeneration | None = None
+    code: list[CodeFile] | None = None
+    review: list[ReviewFinding] | None = None
+    handoff: HandoffDoc | None = None

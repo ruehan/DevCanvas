@@ -21,6 +21,7 @@ from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
     DesignSystem,
     GenerationResult,
+    GenerationResultPatch,
     HandoffDoc,
     RequirementSpec,
     ReviewReport,
@@ -77,6 +78,7 @@ class DummyLLMAdapter:
         ReviewReport: fixtures.review_report(),
         HandoffDoc: fixtures.handoff(),
         GenerationResult: fixtures.generation_result(),
+        GenerationResultPatch: fixtures.generation_result_patch(),
     }
 
     def generate(
@@ -114,10 +116,11 @@ def _build_prompt(
     """
     context_desc = json.dumps(context, ensure_ascii=False, default=str)
     if not include_schema:
+        # formal 스키마 생략(ADR-0022). 반환 형식·구조 지시는 호출자의 instruction 이 소유
+        # (편집=부분 패치, ADR-0023). context 의 기존 인스턴스가 구조 예시 역할.
         return (
             f"{instruction}\n\n"
-            f"반드시 JSON 객체만 반환한다. 컨텍스트의 기존 결과와 완전히 동일한 JSON 구조"
-            f"(같은 키·중첩)를 유지한 채 지시에 해당하는 부분만 수정하라.\n"
+            f"반드시 JSON 객체만 반환한다.\n"
             f"컨텍스트:\n{context_desc}"
         )
     schema_desc = json.dumps(schema.model_json_schema(), ensure_ascii=False)
