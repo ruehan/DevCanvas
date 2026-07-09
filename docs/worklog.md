@@ -1,3 +1,11 @@
+## 2026-07-09 — GLM 실호출 관측 + 전송 계층 재시도 정책 (ADR-0007 이월 해소)
+- 브랜치: feat/glm-observation
+- 한 일: 실 GLM(z.ai glm-4.7-flash 무료) 관측 하네스(`api/scripts/glm_observe.py`) 작성·실행 → requirement 9/9(100%, 스키마 위반 0), edit 0/3(전부 429/timeout). 결론: 재시도 = 전송 계층 일시오류(429/5xx/timeout/transport)만 지수 백오프, 스키마/JSON 위반은 비재시도(결정적 반복). GLMAdapter 에 `_fetch_content` 재시도 루프 + `_is_transient`, 타임아웃 60→120s, settings 3종(glm_timeout/glm_max_retries/glm_retry_base_delay) 추가. sleep 주입으로 무대기 단위테스트.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict/pytest, 재시도 테스트 4종 추가), web(변경 없음). 재관측: requirement 유지, edit 는 무료 티어 429 지속(재시도로 회복 안 됨 — 프롬프트 비대가 근본 원인).
+- 리뷰: 통과 1라운드 — 상세: docs/reviews/2026-07-09-glm-관측-재시도정책.md (max_retries 음수 클램프 반영)
+- 가정/한계: 재시도 로직은 단위테스트로만 검증. 무료 티어 실 edit 통과는 미달성 — edit 프롬프트 축약/캐싱(후속 별도 ADR) 전제. requirement 는 실 GLM 으로 안정 동작 확인.
+- 관련 결정: docs/decisions/0021 (전송 계층 재시도 정책), 0007 (재시도 이월 해소)
+
 ## 2026-07-09 — 스튜디오 재디자인(대화형 셸) — 멈춘 WIP 이어받기
 - 브랜치: feat/studio-redesign
 - 한 일: ADR-0020 대화형 스튜디오 셸 구현 완료. `/studio` = 툴바 + 2컬럼(좌 대화 패널 / 우 캔버스). features/studio(studioReducer empty/loading/ready 상태기계 + ConversationPanel/MessageBubble/LoadingAgent/PromptInput), widgets/studio-canvas(phase별 빈/스켈레톤/ResultViewer 재사용), widgets/studio-toolbar(새 대화 리셋), shared/api/sessions(createSession/postSessionMessage/getSession), shared/types 세션 스키마. page.tsx 가 첫 전송=POST /sessions→messages(전체 파이프라인), 이후=편집으로 백엔드 실연동.

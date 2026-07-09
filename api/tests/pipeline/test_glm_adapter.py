@@ -5,9 +5,11 @@ from __future__ import annotations
 import json
 from typing import Any
 
+import httpx
 import pytest
 from pydantic import BaseModel
 
+from devcanvas_api.core import settings
 from devcanvas_api.pipeline.llm import GenerationError, GLMAdapter
 
 
@@ -58,7 +60,7 @@ def test_glm_generate_sends_chat_completion_request() -> None:
     adapter.generate(_Schema, "instruction", {"prompt": "p"})
     assert captured["url"].endswith("/chat/completions")
     body = captured["kwargs"]["json"]
-    assert body["model"] == "glm-5.2"  # settings 기본 모델
+    assert body["model"] == settings.glm_model  # settings 설정 모델(.env 무관 검증)
     assert body["messages"][0]["content"]  # 프롬프트 채워짐
     assert captured["kwargs"]["headers"]["Authorization"].startswith("Bearer ")
 
@@ -121,3 +123,87 @@ def test_glm_adapter_without_key_raises() -> None:
     )
     with pytest.raises(GenerationError):
         adapter.generate(_Schema, "x", {})
+
+
+# ---------- 전송 계층 재시도 (ADR-0007) ----------
+
+
+def _http_status_error(status: int) -> httpx.HTTPStatusError:
+    """raise_for_status 가 낼 법한 httpx.HTTPStatusError 를 만든다."""
+    req = httpx.Request("POST", "https://glm.example/api/paas/v4/chat/completions")
+    resp = httpx.Response(status, request=req)
+    return httpx.HTTPStatusError(f"http {status}", request=req, response=resp)
+
+
+class _SeqPost:
+    """호출 순서대로 정해진 동작을 수행하는 fake http_post. 예외는 raise, resp 는 반환."""
+
+    def __init__(self, actions: list[_FakeResp | BaseException]) -> None:
+        self._actions = actions
+        self.calls = 0
+
+    def __call__(self, url: str, **kwargs: Any) -> _FakeResp:
+        action = self._actions[self.calls]
+        self.calls += 1
+        if isinstance(action, BaseException):
+            raise action
+        return action
+
+
+def _ok() -> _FakeResp:
+    return _glm_response(json.dumps({"title": "x", "items": []}))
+
+
+def _adapter_with(post: Any, sleeps: list[float], **kw: Any) -> GLMAdapter:
+    return GLMAdapter(
+        api_key="k",
+        api_base="https://glm.example/api/paas/v4",
+        http_post=post,
+        retry_base_delay=1.0,
+        sleep=sleeps.append,
+        **kw,
+    )
+
+
+def test_glm_retries_on_timeout_then_succeeds() -> None:
+    post = _SeqPost([httpx.ReadTimeout("read timed out"), _ok()])
+    sleeps: list[float] = []
+    adapter = _adapter_with(post, sleeps, max_retries=2)
+    result = adapter.generate(_Schema, "x", {})
+    assert result.title == "x"
+    assert post.calls == 2  # 1 실패 + 1 성공
+    assert sleeps == [1.0]  # base * 2**0
+
+
+def test_glm_retries_on_429_then_succeeds() -> None:
+    resp = _FakeResp({}, status=429)
+    # raise_for_status 가 httpx.HTTPStatusError(429) 를 내도록 교체
+    resp.raise_for_status = lambda: (_ for _ in ()).throw(_http_status_error(429))  # type: ignore[method-assign]
+    post = _SeqPost([resp, _ok()])
+    sleeps: list[float] = []
+    adapter = _adapter_with(post, sleeps, max_retries=2)
+    result = adapter.generate(_Schema, "x", {})
+    assert result.title == "x"
+    assert post.calls == 2
+
+
+def test_glm_gives_up_after_max_retries() -> None:
+    post = _SeqPost([httpx.ReadTimeout("t")] * 3)  # 항상 타임아웃
+    sleeps: list[float] = []
+    adapter = _adapter_with(post, sleeps, max_retries=2)
+    with pytest.raises(GenerationError):
+        adapter.generate(_Schema, "x", {})
+    assert post.calls == 3  # 1 + max_retries
+    assert sleeps == [1.0, 2.0]  # 지수 백오프
+
+
+def test_glm_does_not_retry_schema_violation() -> None:
+    # 응답은 정상 도착(200)이나 스키마 위반 — 재호출해도 결정적 반복 → 재시도 금지
+    bad = _glm_response(json.dumps({"title": "x", "items": "not-a-list"}))
+    post = _SeqPost([bad, _ok()])
+    sleeps: list[float] = []
+    adapter = _adapter_with(post, sleeps, max_retries=2)
+    with pytest.raises(GenerationError):
+        adapter.generate(_Schema, "x", {})
+    assert post.calls == 1  # 재시도 없음
+    assert sleeps == []

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import json
 import re
+import time
 from collections.abc import Callable
 from typing import Any, Protocol, TypeVar
 
@@ -30,6 +31,19 @@ from devcanvas_api.pipeline.schemas import (
 T = TypeVar("T", bound=BaseModel)
 
 HttpPost = Callable[..., Any]
+Sleep = Callable[[float], None]
+
+# 재시도 대상 HTTP 상태(일시적 오류). 429=레이트리밋, 5xx=서버측 일시 오류.
+_RETRYABLE_STATUS = frozenset({429, 500, 502, 503, 504})
+
+
+def _is_transient(exc: BaseException) -> bool:
+    """전송 계층 일시 오류인지 판별(재시도 대상). 타임아웃·네트워크·429/5xx."""
+    if isinstance(exc, httpx.TimeoutException | httpx.TransportError):
+        return True
+    if isinstance(exc, httpx.HTTPStatusError):
+        return exc.response.status_code in _RETRYABLE_STATUS
+    return False
 
 
 class LLMAdapter(Protocol):
@@ -111,11 +125,54 @@ class GLMAdapter:
         api_base: str | None = None,
         model: str | None = None,
         http_post: HttpPost | None = None,
+        timeout: float | None = None,
+        max_retries: int | None = None,
+        retry_base_delay: float | None = None,
+        sleep: Sleep | None = None,
     ) -> None:
         self._api_key = api_key if api_key is not None else settings.glm_api_key
         self._api_base = api_base or settings.glm_api_base
         self._model = model or settings.glm_model
         self._http_post = http_post or httpx.post
+        self._timeout = timeout if timeout is not None else settings.glm_timeout
+        raw_retries = max_retries if max_retries is not None else settings.glm_max_retries
+        self._max_retries = max(0, raw_retries)  # 음수는 무의미 → 재시도 없음(0)
+        self._retry_base_delay = (
+            retry_base_delay if retry_base_delay is not None else settings.glm_retry_base_delay
+        )
+        self._sleep = sleep or time.sleep
+
+    def _fetch_content(self, prompt: str) -> str:
+        """chat completions 호출 → content 반환. transient http 오류는 지수 백오프 재시도.
+
+        재시도 대상은 전송 계층 일시 오류(429/timeout/5xx)뿐(ADR-0007). 응답이 와서
+        JSON/스키마가 틀린 경우는 재호출해도 결정적으로 반복되므로 재시도하지 않는다.
+        """
+        last_exc: Exception | None = None
+        for attempt in range(self._max_retries + 1):
+            try:
+                resp = self._http_post(
+                    f"{self._api_base}/chat/completions",
+                    json={
+                        "model": self._model,
+                        "messages": [{"role": "user", "content": prompt}],
+                        "response_format": {"type": "json_object"},
+                        "temperature": 0.2,
+                    },
+                    headers={"Authorization": f"Bearer {self._api_key}"},
+                    timeout=self._timeout,
+                )
+                resp.raise_for_status()
+                content: str = resp.json()["choices"][0]["message"]["content"]
+                return content
+            except Exception as e:  # http/응답 접근 계열 오류
+                last_exc = e
+                if _is_transient(e) and attempt < self._max_retries:
+                    self._sleep(self._retry_base_delay * (2**attempt))
+                    continue
+                raise GenerationError(f"GLM 호출 실패: {e}") from e
+        # 도달 불가(루프는 반환 또는 raise 로 종료) — 타입 완결성용
+        raise GenerationError(f"GLM 호출 실패: {last_exc}")
 
     def generate(self, schema: type[T], instruction: str, context: dict[str, object]) -> T:
         if not self._api_key:
@@ -123,22 +180,7 @@ class GLMAdapter:
                 "GLM API 키 미설정 — DEVCANVAS_GLM_API_KEY 확인"
             )
         prompt = _build_prompt(schema, instruction, context)
-        try:
-            resp = self._http_post(
-                f"{self._api_base}/chat/completions",
-                json={
-                    "model": self._model,
-                    "messages": [{"role": "user", "content": prompt}],
-                    "response_format": {"type": "json_object"},
-                    "temperature": 0.2,
-                },
-                headers={"Authorization": f"Bearer {self._api_key}"},
-                timeout=60,
-            )
-            resp.raise_for_status()
-            content: str = resp.json()["choices"][0]["message"]["content"]
-        except Exception as e:  # http/응답 접근 계열 오류
-            raise GenerationError(f"GLM 호출 실패: {e}") from e
+        content = self._fetch_content(prompt)
 
         data = _extract_json(content)
         try:
