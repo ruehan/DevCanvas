@@ -1,3 +1,11 @@
+## 2026-07-09 — design.html 기반 디자인 시스템 + 랜딩 + 라우트 분리
+- 브랜치: feat/ui-landing-design
+- 한 일: design.html(진실 원천)을 앱 자체 UI 디자인 시스템으로 채택(ADR-0019). globals.css(CSS 변수 18종 warm palette + 애니메이션/질감 포팅), tailwind.config(색/폰트/2xs), layout(next/font JetBrains Mono + GmarketSans CDN). 랜딩 `/`(widgets/landing: hero/manifesto/3 features + FEATURE1 studio session preview + FEATURE2 state matrix preview + footer), 공용 TopBar(widgets/top-bar). 기존 앱 → `/studio` 이동. result-viewer/form 색 토큰 교체(accent/text-muted/danger).
+- 검증: verify-all.sh EXIT 0(web tsc/lint/vitest 30개), pnpm build 성공(/ 1.01kB, /studio 6.04kB)
+- 리뷰: (2라운드 진행 중) — 상세: docs/reviews/2026-07-09-랜딩-디자인-시스템.md
+- 가정: GmarketSans CDN 로드(차후 next/font 자가호스팅). design.html FEATURE 3 preview 빈 칸은 원천 결필 → 스튜디오 재디자인 사이클에서 별도. footer는 design.html에 없으나 보완 추가.
+- 관련 결정: docs/decisions/0019 (앱 디자인 시스템 채택)
+
 ## 2026-07-09 — 대화형 세션 도메인 + 편집 에이전트 (B 사이클 1)
 - 브랜치: feat/conversation-sessions
 - 한 일: Claude Code 식 스튜디오 백엔드 파운데이션(ADR-0017/0018). sessions/ 도메인 — 인메모리 SessionStore(create/get/save), service.post_message(첫 턴=전체 파이프라인 7단계, 이후=apply_edit 1단계), router(POST /sessions, GET /sessions/{id}, POST /sessions/{id}/messages). pipeline/edit_agent.apply_edit(전체 결과 재생성, LLM). get_llm_adapter 를 pipeline/dependencies.py 로 이동(의존 방향 정리). design-brief.md 커밋.
