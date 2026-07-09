@@ -1,3 +1,12 @@
+## 2026-07-09 — 스튜디오 재디자인(대화형 셸) — 멈춘 WIP 이어받기
+- 브랜치: feat/studio-redesign
+- 한 일: ADR-0020 대화형 스튜디오 셸 구현 완료. `/studio` = 툴바 + 2컬럼(좌 대화 패널 / 우 캔버스). features/studio(studioReducer empty/loading/ready 상태기계 + ConversationPanel/MessageBubble/LoadingAgent/PromptInput), widgets/studio-canvas(phase별 빈/스켈레톤/ResultViewer 재사용), widgets/studio-toolbar(새 대화 리셋), shared/api/sessions(createSession/postSessionMessage/getSession), shared/types 세션 스키마. page.tsx 가 첫 전송=POST /sessions→messages(전체 파이프라인), 이후=편집으로 백엔드 실연동.
+- 착수 진단: verify 실패(web tsc noUncheckedIndexedAccess 3건) + 기록 누락 상태였음 → 수정 후 이어받음.
+- 검증: verify-all.sh EXIT 0(web tsc/lint/vitest 44개), pnpm build 성공(/studio 7.9kB, / 1.01kB)
+- 리뷰: 통과 1라운드 — 상세: docs/reviews/2026-07-09-스튜디오-재디자인.md (P1 경쟁조건 가드 + FSD 공개 API 반영)
+- 가정: 인메모리 세션 스토어(재시작 소실, Postgres 이후 Phase). 더미 어댑터에선 fixture 고정, 실 GLM 키로 품질 관측 필요. 스트리밍/점진 단계·Message id 는 다음 사이클.
+- 관련 결정: docs/decisions/0020 (스튜디오 재디자인·대화형 셸)
+
 ## 2026-07-09 — design.html 기반 디자인 시스템 + 랜딩 + 라우트 분리
 - 브랜치: feat/ui-landing-design
 - 한 일: design.html(진실 원천)을 앱 자체 UI 디자인 시스템으로 채택(ADR-0019). globals.css(CSS 변수 18종 warm palette + 애니메이션/질감 포팅), tailwind.config(색/폰트/2xs), layout(next/font JetBrains Mono + GmarketSans CDN). 랜딩 `/`(widgets/landing: hero/manifesto/3 features + FEATURE1 studio session preview + FEATURE2 state matrix preview + footer), 공용 TopBar(widgets/top-bar). 기존 앱 → `/studio` 이동. result-viewer/form 색 토큰 교체(accent/text-muted/danger).

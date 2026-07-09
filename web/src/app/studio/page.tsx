@@ -1,20 +1,30 @@
 "use client";
 
 import { useReducer } from "react";
-import { GenerationForm, initialState, generationReducer } from "@/features/generate-ui";
-import { createGeneration } from "@/shared/api";
-import type { GenerationRequest } from "@/shared/types";
-import { ResultViewer } from "@/widgets/result-viewer";
+import { ConversationPanel, initialState, studioReducer } from "@/features/studio";
 import { TopBar } from "@/widgets/top-bar";
+import { StudioToolbar } from "@/widgets/studio-toolbar";
+import { StudioCanvas } from "@/widgets/studio-canvas";
+import { createSession, postSessionMessage } from "@/shared/api/sessions";
 
 export default function StudioPage() {
-  const [state, dispatch] = useReducer(generationReducer, initialState);
+  const [state, dispatch] = useReducer(studioReducer, initialState);
 
-  async function handleSubmit(request: GenerationRequest) {
-    dispatch({ type: "submit" });
+  async function handleSubmit(prompt: string) {
+    // 생성 중 중복 전송 차단(연타 → 중복 세션 생성 방지)
+    if (state.phase === "loading") return;
+    dispatch({ type: "submit", prompt });
     try {
-      const result = await createGeneration(request);
-      dispatch({ type: "success", result });
+      // 첫 전송 시 세션 생성
+      if (!state.sessionId) {
+        const { id } = await createSession();
+        dispatch({ type: "sessionCreated", sessionId: id });
+        const res = await postSessionMessage(id, prompt);
+        dispatch({ type: "success", agentMessage: res.agent_message, result: res.result });
+      } else {
+        const res = await postSessionMessage(state.sessionId, prompt);
+        dispatch({ type: "success", agentMessage: res.agent_message, result: res.result });
+      }
     } catch (e) {
       dispatch({ type: "error", error: e instanceof Error ? e.message : String(e) });
     }
@@ -23,25 +33,17 @@ export default function StudioPage() {
   return (
     <main className="view">
       <TopBar active="studio" />
-      <div className="mx-auto max-w-5xl space-y-6 p-6">
-        <header>
-          <h1 className="font-serif text-2xl text-text">스튜디오</h1>
-          <p className="text-sm text-text-muted">
-            기획을 입력하면 화면·상태·토큰·코드까지. (대화형 프롬프트는 곧 추가)
-          </p>
-        </header>
+      <StudioToolbar onReset={() => dispatch({ type: "reset" })} hasResult={state.result !== null} />
 
-        <section className="rounded-lg border border-border bg-surface p-4">
-          <GenerationForm onSubmit={handleSubmit} disabled={state.status === "loading"} />
-        </section>
-
-        {state.status === "loading" && <p className="text-text-muted">생성 중...</p>}
-        {state.status === "error" && (
-          <p role="alert" className="text-danger">
-            오류: {state.error}
-          </p>
-        )}
-        {state.status === "success" && state.result && <ResultViewer result={state.result} />}
+      <div className="studio-grid grid" style={{ gridTemplateColumns: "42% 1fr" }}>
+        <ConversationPanel
+          phase={state.phase}
+          messages={state.messages}
+          pendingPrompt={state.pendingPrompt}
+          error={state.error}
+          onSubmit={handleSubmit}
+        />
+        <StudioCanvas phase={state.phase} result={state.result} />
       </div>
     </main>
   );
