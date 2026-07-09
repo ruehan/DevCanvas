@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from devcanvas_api.core import settings
 from devcanvas_api.generations import router as generations_router
 from devcanvas_api.health import router as health_router
+from devcanvas_api.sessions import router as sessions_router
 
 
 def create_app() -> FastAPI:
@@ -22,6 +23,7 @@ def create_app() -> FastAPI:
     )
     app.include_router(health_router)
     app.include_router(generations_router)
+    app.include_router(sessions_router)
     return app
 
 

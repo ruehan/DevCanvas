@@ -19,6 +19,7 @@ from devcanvas_api.pipeline import fixtures
 from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
     DesignSystem,
+    GenerationResult,
     HandoffDoc,
     RequirementSpec,
     ReviewReport,
@@ -50,6 +51,7 @@ class DummyLLMAdapter:
         CodeGeneration: fixtures.code_generation(),
         ReviewReport: fixtures.review_report(),
         HandoffDoc: fixtures.handoff(),
+        GenerationResult: fixtures.generation_result(),
     }
 
     def generate(self, schema: type[T], instruction: str, context: dict[str, object]) -> T:
