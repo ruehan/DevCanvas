@@ -1,3 +1,11 @@
+## 2026-07-09 — GLM 어댑터 실구현체(glm-5.2)
+- 브랜치: feat/glm-adapter-impl
+- 한 일: GLMAdapter 실구현(ADR-0007 보류→채택). OpenAI 호환 /chat/completions(glm-5.2) 호출 → JSON 응답 Pydantic 검증. 응답검증 정책: 어댑터가 검증, 실패 시 GenerationError, MVP 재시도 없음. _extract_json(펜스/여분텍스트 처리). http_post 주입으로 네트워크 없이 테스트. settings.glm_model(기본 glm-5.2)/glm_api_base(기본 bigmodel v4). get_llm_adapter 키만 있으면 GLMAdapter. httpx 런타임 의존화.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict 51파일/pytest), web(변경 없음)
+- 리뷰: 통과 1라운드 — 상세: docs/reviews/2026-07-09-glm-어댑터-실구현체.md
+- 가정: 실 GLM 호출 특성(스키마 위반 빈도) 관측 후 재시도 정책 별도 ADR. 이것으로 MVP 마지막 마일스톤 — 파이프라인 전체(requirement만 LLM, 나머지 6 규칙 기반)가 glm-5.2 키 설정 시 실동작.
+- 관련 결정: docs/decisions/0007 (LLM 포트 시그니처·응답검증 정책, 채택)
+
 ## 2026-07-08 — 핸드오프 정제(ADR-0009 갭 해소)
 - 브랜치: feat/handoff-rule-based
 - 한 일: handoff_agent 를 규칙 기반으로 전환(ADR-0016). build_handoff(code, review) — file_tree(코드 경로 정렬), install_commands(컴포넌트 스텁→외부 의존 tanstack/recharts 검출, shadcn 기본 제공 제외), TODO(review P1 + mock 교체 + 스텁 구현), guide_md. 오케스트레이터 토큰 병합을 handoff 호출 전으로 이동 → 토큰 파일 5종이 file_tree/guide 에 반영(ADR-0009 갭 실제 해소). naming 공용 모듈로 변환 통일.

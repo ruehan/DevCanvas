@@ -18,7 +18,8 @@ class Settings(BaseSettings):
     app_name: str = "DevCanvas API"
     debug: bool = False
     glm_api_key: str | None = None
-    glm_api_base: str | None = None
+    glm_api_base: str = "https://open.bigmodel.cn/api/paas/v4"
+    glm_model: str = "glm-5.2"
     # CORS 허용 origin 목록(dev 기본 전체 허용). 프로덕션은 환경변수로 제한(ADR-0014).
     cors_origins: list[str] = ["*"]
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import pytest
 from pydantic import BaseModel
 
-from devcanvas_api.pipeline.llm import DummyLLMAdapter, GLMAdapter
+from devcanvas_api.pipeline.llm import DummyLLMAdapter, GenerationError, GLMAdapter
 from devcanvas_api.pipeline.schemas import RequirementSpec
 
 
@@ -27,15 +27,8 @@ def test_dummy_returns_independent_copy() -> None:
     assert "새 기능" not in second.features  # 복사본이므로 격리됨
 
 
-def test_glm_stub_raises_without_config() -> None:
-    # 키/엔드포인트 미설정 환경에서는 NotImplementedError
-    adapter = GLMAdapter(api_key=None, api_base=None)
-    with pytest.raises(NotImplementedError):
-        adapter.generate(RequirementSpec, "x", {})
-
-
-def test_glm_stub_raises_not_implemented_with_config() -> None:
-    # 설정돼 있어도 실구현체 전이므로 NotImplementedError (ADR-0005)
-    adapter = GLMAdapter(api_key="dummy", api_base="https://example.invalid")
-    with pytest.raises(NotImplementedError):
+def test_glm_without_key_raises_generation_error() -> None:
+    # 키 미설정 시 GenerationError (ADR-0007)
+    adapter = GLMAdapter(api_key=None, api_base="https://x")
+    with pytest.raises(GenerationError):
         adapter.generate(RequirementSpec, "x", {})
