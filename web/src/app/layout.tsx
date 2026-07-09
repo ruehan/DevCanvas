@@ -23,6 +23,7 @@ export default function RootLayout({
     <html lang="ko" className={jbmono.variable}>
       <head>
         {/* GmarketSans (한국어 본문/디스플레이) — webfontworld CDN (ADR-0019) */}
+        <link rel="preconnect" href="https://cdn.jsdelivr.net" crossOrigin="anonymous" />
         <link
           rel="stylesheet"
           href="https://cdn.jsdelivr.net/gh/webfontworld/gmarketsans/GmarketSans.css"

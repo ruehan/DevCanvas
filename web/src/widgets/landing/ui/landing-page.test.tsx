@@ -15,4 +15,16 @@ describe("LandingPage", () => {
     expect(screen.getByText("02 — COMPLETENESS")).toBeInTheDocument();
     expect(screen.getByText("03 — OUTPUT")).toBeInTheDocument();
   });
+
+  it("FEATURE 1 studio session preview 가 렌더된다", () => {
+    render(<LandingPage />);
+    expect(screen.getByText("5/5 완료")).toBeInTheDocument();
+    expect(screen.getByText("studio session")).toBeInTheDocument();
+  });
+
+  it("FEATURE 2 state matrix preview 가 렌더된다", () => {
+    render(<LandingPage />);
+    expect(screen.getByText("State Matrix")).toBeInTheDocument();
+    expect(screen.getByText(/18 variations/)).toBeInTheDocument();
+  });
 });

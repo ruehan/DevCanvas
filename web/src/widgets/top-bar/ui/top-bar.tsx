@@ -46,9 +46,19 @@ export function TopBar({ active = "landing" }: TopBarProps) {
           </nav>
         </div>
         <div className="flex items-center gap-2">
+          <a
+            href="#"
+            className="hidden items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] text-text-muted transition hover:bg-surface-alt hover:text-text md:inline-flex"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8">
+              <path d="M9 19c-5 0-8-3-8-7s3-7 8-7c2 0 3 .5 4 1.5" />
+              <path d="M15 5c5 0 8 3 8 7s-3 7-8 7c-2 0-3-.5-4-1.5" />
+            </svg>
+            공개 프로젝트
+          </a>
           <Link
             href="/studio"
-            className="hidden items-center gap-1.5 rounded-md px-3 py-1.5 text-[13px] text-text-muted transition hover:bg-surface-alt hover:text-text md:inline-flex"
+            className="rounded-md bg-text px-3.5 py-1.5 text-[13px] font-medium text-bg transition hover:bg-text-soft"
           >
             스튜디오 열기
           </Link>

@@ -106,6 +106,9 @@ export function LandingPage() {
                 <Checklist title="대화로 반복 정제" desc="&ldquo;버튼 더 둥글게&rdquo;, &ldquo;모바일은 카드형으로&rdquo;." />
               </div>
             </div>
+            <div className="fade-up delay-2 lg:col-span-7">
+              <StudioSessionPreview />
+            </div>
           </div>
         </div>
       </section>
@@ -114,6 +117,9 @@ export function LandingPage() {
       <section className="border-b border-border bg-bg-soft paper">
         <div className="mx-auto max-w-[1400px] px-6 py-24 md:px-10 md:py-32">
           <div className="grid items-center gap-12 lg:grid-cols-12">
+            <div className="fade-up delay-2 order-2 lg:order-1 lg:col-span-6">
+              <StateMatrixPreview />
+            </div>
             <div className="fade-up order-1 lg:order-2 lg:col-span-6">
               <FeatureTag>02 — COMPLETENESS</FeatureTag>
               <h2 className="mb-6 font-serif text-[36px] leading-[1.15] tracking-tight text-text md:text-[44px]">
@@ -126,6 +132,16 @@ export function LandingPage() {
                 빈 데이터, 에러, 권한 없음, 모바일까지 — 실 서비스에 필요한 모든 상태를 한 번에
                 생성합니다. 디자이너가 가장 놓치기 쉬운 부분을 자동으로 채웁니다.
               </p>
+              <div className="mt-8 grid max-w-[440px] grid-cols-2 gap-4">
+                <div className="border-l-2 border-accent pl-4">
+                  <div className="font-serif text-[24px] text-text">6가지</div>
+                  <div className="mt-1 text-[12px] text-text-muted">핵심 UI 상태 자동 생성</div>
+                </div>
+                <div className="border-l-2 border-border-strong pl-4">
+                  <div className="font-serif text-[24px] text-text">100%</div>
+                  <div className="mt-1 text-[12px] text-text-muted">엣지 케이스 커버리지</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -318,5 +334,170 @@ function Token({ color, border }: { color: string; border?: boolean }) {
       className="h-4 w-4 rounded-sm"
       style={{ background: color, border: border ? "1px solid #E5E2D8" : undefined }}
     />
+  );
+}
+
+/** FEATURE 1 — studio session 채팅 목업 (design.html 1040-1100). */
+function StudioSessionPreview() {
+  return (
+    <div className="paper-dense relative rounded-xl border border-border bg-bg-soft p-8">
+      <div className="overflow-hidden rounded-lg border border-border bg-surface shadow-sm">
+        <div className="flex items-center justify-between border-b border-border bg-bg-soft/50 px-4 py-2">
+          <div className="flex items-center gap-2">
+            <div className="h-2 w-2 rounded-full bg-accent" />
+            <span className="font-mono text-[11px] text-text-muted">studio session</span>
+          </div>
+          <span className="font-mono text-[10px] text-text-faint">3 turns</span>
+        </div>
+
+        <div className="space-y-4 bg-bg-soft p-5">
+          {/* 사용자 */}
+          <div className="flex justify-end">
+            <div className="max-w-[80%] rounded-lg rounded-tr-sm bg-text px-3 py-2 text-[12px] text-bg">
+              채용 플랫폼 공고 목록 만들어줘. 필터 사이드바랑 상세 모달 포함.
+            </div>
+          </div>
+
+          {/* 에이전트 */}
+          <div className="flex justify-start">
+            <div className="max-w-[85%] space-y-2">
+              <div className="flex items-center gap-1.5">
+                <div className="flex h-4 w-4 items-center justify-center rounded-sm border border-border-strong bg-surface">
+                  <div className="h-1.5 w-1.5 rounded-sm bg-accent" />
+                </div>
+                <span className="font-mono text-[10px] text-text-muted">DevCanvas</span>
+              </div>
+              <div className="rounded-lg rounded-tl-sm border border-border bg-surface px-3 py-2 text-[12px] text-text-soft">
+                네, 채용 플랫폼 공고 목록을 설계했어요. 좌측 필터 사이드바, 메인 카드 리스트, 우측
+                상세 드로어 구조입니다.
+              </div>
+              <div className="overflow-hidden rounded-lg border border-border bg-surface">
+                <div className="flex items-center justify-between border-b border-border px-2 py-1 font-mono text-[9px] uppercase text-text-faint">
+                  <span>작업 단계</span>
+                  <span className="text-success">5/5 완료</span>
+                </div>
+                <div className="space-y-1 p-2 font-mono text-[10px] text-text-muted">
+                  <StepDone>요구사항 분석</StepDone>
+                  <StepDone>UX 구조 설계</StepDone>
+                  <StepDone>컴포넌트 생성 (8개)</StepDone>
+                  <StepDone>상태별 UI (5개)</StepDone>
+                  <StepDone>코드 검증</StepDone>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 사용자2 */}
+          <div className="flex justify-end">
+            <div className="max-w-[80%] rounded-lg rounded-tr-sm bg-text px-3 py-2 text-[12px] text-bg">
+              모바일에서는 필터를 바텀시트로 바꿔줘.
+            </div>
+          </div>
+
+          {/* 타이핑 */}
+          <div className="flex justify-start">
+            <div className="flex items-center gap-1.5 rounded-full border border-border bg-surface px-3 py-1.5">
+              <span className="typing">
+                <span />
+                <span />
+                <span />
+              </span>
+              <span className="text-[10px] text-text-muted">수정 중...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function StepDone({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex items-center gap-1.5">
+      <span className="text-success">✓</span>
+      {children}
+    </div>
+  );
+}
+
+/** FEATURE 2 — State Matrix 카드 (design.html 1110-1192). */
+function StateMatrixPreview() {
+  return (
+    <div className="rounded-xl border border-border bg-surface p-6 shadow-[0_1px_2px_rgba(31,30,29,0.04),0_12px_32px_-12px_rgba(31,30,29,0.08)]">
+      <div className="mb-4 flex items-center justify-between border-b border-border pb-3">
+        <div className="flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#1F1E1D" strokeWidth="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+          </svg>
+          <span className="font-serif text-[16px] text-text">State Matrix</span>
+        </div>
+        <span className="rounded bg-accent-soft px-2 py-0.5 font-mono text-[10px] text-accent">
+          화면 × 상태
+        </span>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <StateTile label="default" dot="bg-success">
+          <div className="h-1.5 w-3/4 rounded bg-border" />
+          <div className="mt-1 h-4 rounded border border-border bg-surface" />
+          <div className="h-4 rounded border border-border bg-surface" />
+        </StateTile>
+        <StateTile label="loading" dot="bg-warn">
+          <div className="skeleton h-1.5 w-3/4 rounded" />
+          <div className="skeleton mt-1 h-4 rounded" />
+          <div className="skeleton h-4 rounded" />
+        </StateTile>
+        <StateTile label="empty" dot="bg-text-faint">
+          <div className="mb-1 h-4 w-4 rounded-full border border-border-strong" />
+          <div className="h-1 w-2/3 rounded bg-border" />
+        </StateTile>
+        <StateTile label="error" dot="bg-danger">
+          <div className="mb-0.5 font-serif text-[14px] text-danger">!</div>
+          <div className="h-1 w-3/4 rounded bg-danger-soft" />
+        </StateTile>
+        <StateTile label="403" dot="bg-text-muted">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6B6760" strokeWidth="1.5">
+            <rect x="3" y="11" width="18" height="11" rx="2" />
+            <path d="M7 11V7a5 5 0 0110 0v4" />
+          </svg>
+        </StateTile>
+        <StateTile label="mobile" dot="bg-accent">
+          <div className="rounded border border-border-strong bg-surface p-0.5">
+            <div className="mb-0.5 h-0.5 w-3/4 rounded bg-border" />
+            <div className="mb-0.5 h-2 rounded bg-border" />
+            <div className="mb-0.5 h-2 rounded bg-border" />
+            <div className="h-2 rounded bg-border" />
+          </div>
+        </StateTile>
+      </div>
+
+      <div className="mt-4 flex items-center justify-between border-t border-border pt-3">
+        <span className="font-mono text-[10px] text-text-muted">3 screens × 6 states = 18 variations</span>
+        <button className="font-mono text-[10px] text-accent hover:underline">상세 보기 →</button>
+      </div>
+    </div>
+  );
+}
+
+function StateTile({
+  label,
+  dot,
+  children,
+}: {
+  label: string;
+  dot: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="overflow-hidden rounded-md border border-border bg-bg-soft">
+      <div className="flex items-center justify-between border-b border-border bg-surface px-2 py-1">
+        <span className="font-mono text-[9px] text-text-muted">{label}</span>
+        <span className={`h-1.5 w-1.5 rounded-full ${dot}`} />
+      </div>
+      <div className="flex flex-col items-center justify-center space-y-1 p-2">{children}</div>
+    </div>
   );
 }
