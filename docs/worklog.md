@@ -1,3 +1,11 @@
+## 2026-07-10 — UI/Code 에이전트 LLM 전환 (ADR-0024, 0011/0012 보완) — 다양성 회복
+- 브랜치: feat/ui-code-llm
+- 한 일: "프롬프트 무관 동일 결과물" 해소. `ui_generator_agent` LLM 전환 — 화면 배치(layout 문자열)·렌더 트리(component_tree)를 LLM 자체 결정. `code_generator_agent` LLM 전환 — page.tsx 본문만 LLM, components/types/mock-data 는 기존 rule-based 유지. 신규 스키마 `PageSkel`/`CodeSkel` + DummyLLMAdapter fixture. 검증 함수 `_ui_matches_plan`(계약: layout 수/kind 일치/tree 비어있지 않음), `_is_valid_tsx`(`'use client'`+default export + `@/components/<x>` import 가 stub 집합의 부분집합). **graceful fallback**: (a) `GenerationError` → 에이전트 전체 rule-based, (b) page content import 위반 → 페이지 단위 `templates.page_code()`. 기존 `build_ui_generation`/`build_code_generation` 보존(레거시 테스트 호환 + fallback 본체). orchestrator 호출부에 `generation_input` 인자 추가.
+- 검증: verify-all.sh EXIT 0 — api(ruff/mypy strict/pytest 152개, ui 8 + code 11 신규 LLM 테스트 포함), web(tsc/lint/vitest 44개).
+- 리뷰: 통과 2라운드(라운드 1 수정 필요 → 라운드 2 통과) — 상세: docs/reviews/2026-07-10-ui-code-에이전트-llm-전환.md
+- 가정/한계: 실 GLM 으로 화면별 다양성·fallback 빈도 관측 필요. import 검증 정규식은 단일 세그먼트만 캡처(`@/components/foo/bar` false positive 가능, 후속 관측 시 재검토). review/handoff 는 그대로 rule-based.
+- 관련 결정: docs/decisions/0024 (UI/Code 에이전트 LLM 전환), 0011/0012 보완
+
 ## 2026-07-09 — 편집 부분 패치 방식 (ADR-0023, ADR-0018 대체) — 실 edit 최초 성공
 - 브랜치: feat/edit-patch
 - 한 일: 편집을 전체 재생성 → 부분 패치로 전환. `GenerationResultPatch`(전 필드 Optional) 신설 — LLM 이 변경 최상위 섹션만 반환. `edit_agent`: apply_edit = generate(patch, include_schema=False) → `merge_patch`(non-None 섹션 교체 병합 후 GenerationResult 재검증). Dummy 는 requirement 만 바꾼 최소 패치 fixture. `_build_prompt` include_schema=False 분기 중립화(구조 지시는 EDIT_INSTRUCTION 소유).
