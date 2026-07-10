@@ -9,12 +9,14 @@ from __future__ import annotations
 from devcanvas_api.pipeline.schemas import (
     CodeFile,
     CodeGeneration,
+    CodeSkel,
     DesignSystem,
     DesignTokens,
     GenerationInput,
     GenerationResult,
     GenerationResultPatch,
     HandoffDoc,
+    PageSkel,
     RequirementSpec,
     ReviewFinding,
     ReviewReport,
@@ -104,6 +106,36 @@ def ui_generation() -> UIGeneration:
 
 def code_generation() -> CodeGeneration:
     return CodeGeneration(files=code_files())
+
+
+def code_skel() -> CodeSkel:
+    """더미 page 골격 — UIGeneration fixture 의 각 layout 에 대해 templates.page_path 와
+    일치하는 path 와 안전한 tsx content 를 반환한다 (ADR-0024).
+    """
+    return CodeSkel(
+        pages=[
+            PageSkel(
+                path="app/customer/page.tsx",
+                content=(
+                    "'use client';\n"
+                    "// 더미 페이지 본문 (생성 뼈대)\n"
+                    "export default function CustomerListPage() {\n"
+                    "  return <div>CustomerListPage</div>;\n"
+                    "}\n"
+                ),
+            ),
+            PageSkel(
+                path="app/customer/[id]/page.tsx",
+                content=(
+                    "'use client';\n"
+                    "// 더미 페이지 본문 (생성 뼈대)\n"
+                    "export default function CustomerDetailPage() {\n"
+                    "  return <div>CustomerDetailPage</div>;\n"
+                    "}\n"
+                ),
+            ),
+        ]
+    )
 
 
 def code_files() -> list[CodeFile]:

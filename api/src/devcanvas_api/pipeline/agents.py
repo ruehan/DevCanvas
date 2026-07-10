@@ -7,13 +7,16 @@
 
 from __future__ import annotations
 
+from devcanvas_api.pipeline.code import templates as code_templates
 from devcanvas_api.pipeline.code.generator import build_code_generation
 from devcanvas_api.pipeline.design.presets import build_design_system
 from devcanvas_api.pipeline.handoff.builder import build_handoff
 from devcanvas_api.pipeline.llm import LLMAdapter
 from devcanvas_api.pipeline.review.reviewer import run_review
 from devcanvas_api.pipeline.schemas import (
+    CodeFile,
     CodeGeneration,
+    CodeSkel,
     DesignSystem,
     GenerationInput,
     HandoffDoc,
@@ -115,12 +118,70 @@ def _ui_matches_plan(plan: UXPlan, gen: UIGeneration) -> bool:
 def code_generator_agent(
     generation_input: GenerationInput, ui: UIGeneration, llm: LLMAdapter
 ) -> CodeGeneration:
-    """UIGeneration 에서 코드 파일을 규칙 기반 생성 (ADR-0012, LLM 미사용).
+    """UIGeneration 에서 코드 파일을 생성 (ADR-0024, 0012 보완).
 
-    generation_input/llm 은 시그니처 일관성을 위해 유지하되 현재 미사용.
+    page.tsx content 는 LLM 이 결정. components/types/mock-data 는 기존 rule-based 템플릿
+    유지. LLM 이 우리 path 와 일치하는 content 를 주면 채택, 아니면 templates.page_code() 로
+    graceful fallback (페이지 단위).
     """
-    del generation_input, llm
-    return build_code_generation(ui)
+    # LLM 이 각 페이지에 대해 우리 계산 path 로 content 작성
+    screens_ctx = [
+        {
+            "screen": lay.screen,
+            "path": code_templates.page_path(lay, i),
+            "kind": lay.kind.value,
+            "components": lay.component_tree,
+        }
+        for i, lay in enumerate(ui.layouts)
+    ]
+    instruction = (
+        "위 screens 배열의 각 path 에 들어갈 Next.js App Router page 본문(tsx) 을 작성하라. "
+        "각 페이지마다 한 항목. path 는 그대로 사용. content 는 'use client' 디렉티브와 "
+        "export default function PageName() { return <...>; } 형태의 React 컴포넌트 본문. "
+        "데이터 fetching, 로딩/에러 분기, 화면 목적에 맞는 UI 구조를 자유롭게 작성하라."
+    )
+    skel = llm.generate(
+        CodeSkel,
+        instruction,
+        {
+            "screens": screens_ctx,
+            "prompt": generation_input.prompt,
+            "screen_type": generation_input.screen_type.value,
+        },
+    )
+    llm_pages_by_path = {p.path: p.content for p in skel.pages if p.path}
+
+    # page 파일: 우리 path 기준으로 LLM content 또는 템플릿 fallback
+    page_files: list[CodeFile] = []
+    seen_paths: set[str] = set()
+    for i, lay in enumerate(ui.layouts):
+        path = code_templates.page_path(lay, i)
+        if path in seen_paths:
+            continue
+        seen_paths.add(path)
+        content = llm_pages_by_path.get(path)
+        if content and _is_valid_tsx(content):
+            page_files.append(CodeFile(path=path, language="tsx", content=content))
+        else:
+            page_files.append(
+                CodeFile(path=path, language="tsx", content=code_templates.page_code(lay, i))
+            )
+
+    # 컴포넌트·types·mock 은 기존 rule-based 결과에서 추출 (page 제외)
+    base = build_code_generation(ui)
+    aux_files = [
+        f for f in base.files if not (f.path.startswith("app/") and f.path.endswith("page.tsx"))
+    ]
+
+    return CodeGeneration(files=[*page_files, *aux_files])
+
+
+def _is_valid_tsx(content: str) -> bool:
+    """LLM page content 가 tsx 본문으로 안전한지 검증 (ADR-0024 fallback 기준).
+
+    최소 요구: 'use client' 디렉티브와 default export 형태. 둘 다 없으면 fallback.
+    """
+    return "use client" in content and "export default function" in content
 
 
 def review_agent(

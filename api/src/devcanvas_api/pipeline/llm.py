@@ -19,6 +19,7 @@ from devcanvas_api.core import settings
 from devcanvas_api.pipeline import fixtures
 from devcanvas_api.pipeline.schemas import (
     CodeGeneration,
+    CodeSkel,
     DesignSystem,
     GenerationResult,
     GenerationResultPatch,
@@ -75,6 +76,7 @@ class DummyLLMAdapter:
         DesignSystem: fixtures.design_system(),
         UIGeneration: fixtures.ui_generation(),
         CodeGeneration: fixtures.code_generation(),
+        CodeSkel: fixtures.code_skel(),
         ReviewReport: fixtures.review_report(),
         HandoffDoc: fixtures.handoff(),
         GenerationResult: fixtures.generation_result(),

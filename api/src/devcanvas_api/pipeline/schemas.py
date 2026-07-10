@@ -198,3 +198,27 @@ class GenerationResultPatch(BaseModel):
     code: list[CodeFile] | None = None
     review: list[ReviewFinding] | None = None
     handoff: HandoffDoc | None = None
+
+
+# ---------- 5단계 LLM 산출 (ADR-0024): 페이지 골격 ----------
+
+
+class PageSkel(BaseModel):
+    """LLM 이 생성하는 페이지 골격 (ADR-0024).
+
+    path 는 우리 템플릿이 계산한 경로와 정확히 일치해야 한다(스키마 자체로는 강제 안 함 —
+    code_generator_agent 가 검증 후 채택). content 는 tsx 본문.
+    """
+
+    path: str
+    content: str
+
+
+class CodeSkel(BaseModel):
+    """LLM 이 반환하는 page.tsx 골격 컨테이너 (ADR-0024).
+
+    code_generator_agent 가 layouts 를 순회하며 우리 path 와 매칭해 content 를 채택한다.
+    매칭 안 되면 templates.page_code() 로 graceful fallback.
+    """
+
+    pages: list[PageSkel] = Field(default_factory=list)
