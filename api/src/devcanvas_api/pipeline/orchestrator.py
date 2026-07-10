@@ -39,7 +39,7 @@ def run_pipeline(generation_input: GenerationInput, llm: LLMAdapter) -> Generati
     requirement = agents.requirement_agent(generation_input, llm)
     ux_plan = agents.ux_planner_agent(requirement, generation_input, llm)
     design_system = agents.design_system_agent(generation_input, requirement, llm)
-    ui = agents.ui_generator_agent(ux_plan, design_system, llm)
+    ui = agents.ui_generator_agent(ux_plan, design_system, generation_input, llm)
     code = agents.code_generator_agent(generation_input, ui, llm)
 
     # 디자인 토큰 산출물을 코드 파일에 병합 (ADR-0009).
