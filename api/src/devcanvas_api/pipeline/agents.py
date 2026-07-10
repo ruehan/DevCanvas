@@ -7,11 +7,14 @@
 
 from __future__ import annotations
 
+import re
+
 from devcanvas_api.pipeline.code import templates as code_templates
 from devcanvas_api.pipeline.code.generator import build_code_generation
 from devcanvas_api.pipeline.design.presets import build_design_system
 from devcanvas_api.pipeline.handoff.builder import build_handoff
-from devcanvas_api.pipeline.llm import LLMAdapter
+from devcanvas_api.pipeline.llm import GenerationError, LLMAdapter
+from devcanvas_api.pipeline.naming import pascal_to_kebab
 from devcanvas_api.pipeline.review.reviewer import run_review
 from devcanvas_api.pipeline.schemas import (
     CodeFile,
@@ -68,9 +71,9 @@ def ui_generator_agent(
 ) -> UIGeneration:
     """UXPlan 에서 화면별 레이아웃·컴포넌트 트리를 LLM 으로 도출 (ADR-0024, 0011 보완).
 
-    LLM 이 각 layout 의 `layout` 문자열과 `component_tree` 를 자체 결정. 계약 위반 시
-    rule-based(build_ui_generation)로 graceful fallback. design_system 은 컨텍스트로
-    전달되지만 현재 미사용 — 향후 토큰·테마 기반 변형에 활용 예정.
+    LLM 이 각 layout 의 `layout` 문자열과 `component_tree` 를 자체 결정. LLM 호출 실패
+    (GenerationError) 또는 계약 위반 시 rule-based(build_ui_generation)로 graceful fallback.
+    design_system 은 향후 토큰·테마 기반 변형에 활용 예정으로 시그니처에 유지하되 현재 미사용.
     """
     instruction = (
         "UXPlan 의 각 화면에 대해 화면 배치(layout 문자열)와 렌더 순서 컴포넌트 트리를 설계하라. "
@@ -78,16 +81,18 @@ def ui_generator_agent(
         "component_tree 는 비어있지 않아야 하며 화면 목적에 맞는 실제 컴포넌트 이름(KpiCard, "
         "DataTable, Tabs 등)을 자유롭게 선택하라."
     )
-    generated = llm.generate(
-        UIGeneration,
-        instruction,
-        {
-            "ux_plan": ux_plan.model_dump(),
-            "design_system": design_system.model_dump(),
-            "screen_type": generation_input.screen_type.value,
-            "tone": generation_input.tone.value,
-        },
-    )
+    try:
+        generated = llm.generate(
+            UIGeneration,
+            instruction,
+            {
+                "ux_plan": ux_plan.model_dump(),
+                "screen_type": generation_input.screen_type.value,
+                "tone": generation_input.tone.value,
+            },
+        )
+    except GenerationError:
+        return build_ui_generation(ux_plan)
     if not _ui_matches_plan(ux_plan, generated):
         return build_ui_generation(ux_plan)
     return generated
@@ -121,8 +126,8 @@ def code_generator_agent(
     """UIGeneration 에서 코드 파일을 생성 (ADR-0024, 0012 보완).
 
     page.tsx content 는 LLM 이 결정. components/types/mock-data 는 기존 rule-based 템플릿
-    유지. LLM 이 우리 path 와 일치하는 content 를 주면 채택, 아니면 templates.page_code() 로
-    graceful fallback (페이지 단위).
+    유지. LLM 호출 실패(GenerationError) 시 전 페이지 fallback. 페이지별로 우리 path 와
+    매칭 + 정합성 검증 통과 시 LLM content 채택, 아니면 templates.page_code() 로 fallback.
     """
     # LLM 이 각 페이지에 대해 우리 계산 path 로 content 작성
     screens_ctx = [
@@ -138,18 +143,25 @@ def code_generator_agent(
         "위 screens 배열의 각 path 에 들어갈 Next.js App Router page 본문(tsx) 을 작성하라. "
         "각 페이지마다 한 항목. path 는 그대로 사용. content 는 'use client' 디렉티브와 "
         "export default function PageName() { return <...>; } 형태의 React 컴포넌트 본문. "
-        "데이터 fetching, 로딩/에러 분기, 화면 목적에 맞는 UI 구조를 자유롭게 작성하라."
+        "import 가능한 컴포넌트는 components 배열의 항목만 사용하라(예: "
+        "import { Foo } from '@/components/foo'). 다른 라이브러리 import 는 피하라."
     )
-    skel = llm.generate(
-        CodeSkel,
-        instruction,
-        {
-            "screens": screens_ctx,
-            "prompt": generation_input.prompt,
-            "screen_type": generation_input.screen_type.value,
-        },
-    )
+    try:
+        skel = llm.generate(
+            CodeSkel,
+            instruction,
+            {
+                "screens": screens_ctx,
+                "prompt": generation_input.prompt,
+                "screen_type": generation_input.screen_type.value,
+            },
+        )
+    except GenerationError:
+        return build_code_generation(ui)
     llm_pages_by_path = {p.path: p.content for p in skel.pages if p.path}
+
+    # 모든 layout 에서 import 가능한 stub kebab 집합 (page 단위 정합성 검증용)
+    stub_kebabs = {pascal_to_kebab(c) for lay in ui.layouts for c in lay.component_tree}
 
     # page 파일: 우리 path 기준으로 LLM content 또는 템플릿 fallback
     page_files: list[CodeFile] = []
@@ -160,7 +172,7 @@ def code_generator_agent(
             continue
         seen_paths.add(path)
         content = llm_pages_by_path.get(path)
-        if content and _is_valid_tsx(content):
+        if content and _is_valid_tsx(content, stub_kebabs):
             page_files.append(CodeFile(path=path, language="tsx", content=content))
         else:
             page_files.append(
@@ -176,12 +188,19 @@ def code_generator_agent(
     return CodeGeneration(files=[*page_files, *aux_files])
 
 
-def _is_valid_tsx(content: str) -> bool:
+_TSX_IMPORT_RE = re.compile(r"@/components/([a-z0-9-]+)")
+
+
+def _is_valid_tsx(content: str, allowed_kebabs: set[str]) -> bool:
     """LLM page content 가 tsx 본문으로 안전한지 검증 (ADR-0024 fallback 기준).
 
-    최소 요구: 'use client' 디렉티브와 default export 형태. 둘 다 없으면 fallback.
+    - 'use client' 디렉티브와 default export 형태 필수
+    - @/components/<x> import 경로가 stub 집합의 부분집합 (아니면 fallback — 빌드 실패 방지)
     """
-    return "use client" in content and "export default function" in content
+    if "use client" not in content or "export default function" not in content:
+        return False
+    imports = set(_TSX_IMPORT_RE.findall(content))
+    return imports <= allowed_kebabs
 
 
 def review_agent(

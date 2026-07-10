@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from devcanvas_api.pipeline.agents import ui_generator_agent
-from devcanvas_api.pipeline.llm import DummyLLMAdapter
+from devcanvas_api.pipeline.llm import DummyLLMAdapter, GenerationError
 from devcanvas_api.pipeline.schemas import (
     DesignSystem,
     GenerationInput,
@@ -216,3 +216,19 @@ def test_ui_generator_llm_tree_differs_by_kind() -> None:
     gen = ui_generator_agent(_plan(), _ds(), _input(), llm)  # type: ignore[arg-type]
     trees = {frozenset(lay.component_tree) for lay in gen.layouts}
     assert len(trees) >= 2  # 두 화면의 tree가 서로 다름
+
+
+def test_ui_generator_falls_back_on_generation_error() -> None:
+    """LLM 호출 실패(GenerationError) 시 rule-based fallback (ADR-0024 가용성 보장)."""
+
+    class BoomLLM:
+        def generate(self, schema, instruction, context):  # type: ignore[no-untyped-def]
+            raise GenerationError("GLM 다운")
+
+    gen = ui_generator_agent(_plan(), _ds(), _input(), BoomLLM())  # type: ignore[arg-type]
+    # fallback 결과: plan의 모든 screen에 대해 layout 존재 + kind 일치
+    assert len(gen.layouts) == len(_plan().screens)
+    plan_by_name = {s.name: s for s in _plan().screens}
+    for lay in gen.layouts:
+        assert lay.component_tree  # 템플릿 트리 채워짐
+        assert lay.kind == plan_by_name[lay.screen].kind

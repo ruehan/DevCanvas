@@ -31,5 +31,11 @@
 - `DummyLLMAdapter`에 신규 스키마 fixture 추가 필요.
 - LLM 페이지 골격은 우리가 `templates.page_path` 로 재계산한 경로에 배치 (LLM이 path 무시). LLM 응답이
   우리 경로와 다르면 fallback.
+- **fallback 트리거**: (a) `GenerationError` (GLM 다운/검증 실패) — 해당 에이전트 전체 fallback.
+  (b) page content가 stub에 없는 컴포넌트를 `@/components/<x>` 로 import — 페이지 단위 fallback.
+  둘 다 graceful (예외 미전파).
 - 하위 `review_agent`/`handoff_agent`는 그대로 rule-based.
+- `design_system` 은 시그니처에 유지하되 현재 context 미포함 — 향후 토큰·테마 기반 변형에 활용.
 - 토큰 비용↑(LLM 호출 1→2회 추가). UX 단계 대비 출력 토큰 큼 → temperature 0.2·response_format 유지.
+- **trade-off (import 정합성)**: LLM page content의 컴포넌트 import는 실제 생성될 stub 집합의 부분집합만 허용.
+  그 외는 페이지 단위 fallback. 다양성 일부 제약 ↔ sandpack 빌드 안정성 확보.

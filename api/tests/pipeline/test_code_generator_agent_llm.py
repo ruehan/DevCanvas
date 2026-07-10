@@ -8,7 +8,7 @@ from __future__ import annotations
 from typing import Any
 
 from devcanvas_api.pipeline.agents import code_generator_agent
-from devcanvas_api.pipeline.llm import DummyLLMAdapter
+from devcanvas_api.pipeline.llm import DummyLLMAdapter, GenerationError
 from devcanvas_api.pipeline.schemas import (
     GenerationInput,
     ScreenKind,
@@ -245,3 +245,45 @@ def test_code_generator_page_path_from_template() -> None:
     assert "app/dashboard/page.tsx" in paths
     assert "app/customer/page.tsx" in paths
     assert "WRONG/path.tsx" not in paths
+
+
+def test_code_generator_falls_back_on_generation_error() -> None:
+    """LLM 호출 실패(GenerationError) 시 전 페이지 rule-based fallback (ADR-0024)."""
+
+    class BoomLLM:
+        def generate(self, schema, instruction, context):  # type: ignore[no-untyped-def]
+            raise GenerationError("GLM 다운")
+
+    gen = code_generator_agent(_input(), _ui(), BoomLLM())  # type: ignore[arg-type]
+    paths = {f.path for f in gen.files}
+    assert "app/dashboard/page.tsx" in paths
+    assert "app/customer/page.tsx" in paths
+    # fallback은 템플릿 page_code 형태
+    dash = next(f for f in gen.files if f.path == "app/dashboard/page.tsx")
+    assert "DashboardPage" in dash.content
+
+
+def test_code_generator_falls_back_on_unknown_component_import() -> None:
+    """LLM content가 stub에 존재하지 않는 컴포넌트를 import 하면 페이지 단위 fallback."""
+    bad_content = (
+        "'use client';\n"
+        "import { Ghost } from '@/components/ghost';\n"
+        "export default function DashboardPage() { return <Ghost />; }"
+    )
+
+    class BadImportLLM:
+        def generate(self, schema, instruction, context):  # type: ignore[no-untyped-def]
+            return schema.model_validate(
+                {
+                    "pages": [
+                        {"path": "app/dashboard/page.tsx", "content": bad_content},
+                        {"path": "app/customer/page.tsx", "content": _LIST_OK},
+                    ]
+                }
+            )
+
+    gen = code_generator_agent(_input(), _ui(), BadImportLLM())  # type: ignore[arg-type]
+    dash = next(f for f in gen.files if f.path == "app/dashboard/page.tsx")
+    # fallback → 템플릿 page_code (Ghost import 없음)
+    assert "Ghost" not in dash.content
+    assert "DashboardPage" in dash.content
